@@ -1,0 +1,133 @@
+import { useState, useRef } from "react"
+import { Volume2Icon, VolumeOffIcon } from "lucide-react"
+
+import { cn } from "@/lib/utils"
+import { SoundNames } from "@/home/context/sound.types"
+import { useClickOutside } from "@/hooks/use-click-outside"
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  SelectSeparator,
+} from "@/components/ui/select"
+import { Toggle } from "@/components/ui/toggle"
+import { Button } from "@/components/ui/button"
+import { useSound } from "@/home/context/sound.context"
+
+export const SoundSettings = () => {
+  const sliderRef = useRef<HTMLDivElement>(null)
+  const [showVolumeSlider, setShowVolumeSlider] = useState(false)
+
+  const { soundName, volume, isMuted, playSound, setSoundName, setVolume, setIsMuted } =
+    useSound()
+
+  // Close slider when clicking outside
+  useClickOutside(sliderRef, () => setShowVolumeSlider(false), showVolumeSlider)
+
+  const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newVolume = parseFloat(e.target.value)
+    setVolume(newVolume)
+    if (newVolume === 0) {
+      setIsMuted(true)
+    } else if (isMuted && newVolume > 0) {
+      setIsMuted(false)
+    }
+  }
+
+  return (
+    <div className="flex items-center gap-4">
+      <span className="text-muted-foreground text-6 md:text-5">Sound</span>
+      <div className="flex items-center gap-2">
+        <Select
+          // open
+          value={soundName}
+          onValueChange={(val) => setSoundName(val as SoundNames)}>
+          <SelectTrigger
+            className={cn(
+              "text-6 md:text-5 min-w-30.5",
+              soundName === "none" ?
+                "bg-input/50 hover:bg-input/70"
+              : "bg-blue-400 dark:bg-blue-600",
+            )}>
+            <SelectValue placeholder="Sound" />
+          </SelectTrigger>
+          <SelectContent
+            side="top"
+            position="popper"
+            className="duration-300 ease-out">
+            <SelectGroup>
+              <SelectItem value="none">None</SelectItem>
+              <SelectSeparator className="bg-border my-1 h-px w-full" />
+              <SelectItem value="click">Click</SelectItem>
+              <SelectSeparator className="bg-border my-1 h-px w-full" />
+              <SelectItem value="beep">Beep</SelectItem>
+              <SelectSeparator className="bg-border my-1 h-px w-full" />
+              <SelectItem value="creamy">Creamy</SelectItem>
+              <SelectSeparator className="bg-border my-1 h-px w-full" />
+              <SelectItem value="hitmarker">Hitmarker</SelectItem>
+              <SelectSeparator className="bg-border my-1 h-px w-full" />
+              <SelectItem value="osu">Osu</SelectItem>
+              <SelectSeparator className="bg-border my-1 h-px w-full" />
+              <SelectItem value="pop">Pop</SelectItem>
+              <SelectSeparator className="bg-border my-1 h-px w-full" />
+              <SelectItem value="punch">Punch</SelectItem>
+              <SelectSeparator className="bg-border my-1 h-px w-full" />
+              <SelectItem value="rubber">Rubber</SelectItem>
+              <SelectSeparator className="bg-border my-1 h-px w-full" />
+              <SelectItem value="typewriter">Typewriter</SelectItem>
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+
+        <div
+          className="relative"
+          ref={sliderRef}>
+          <Toggle
+            variant="outline"
+            aria-label="Volume settings"
+            pressed={showVolumeSlider || isMuted}
+            onPressedChange={() => setShowVolumeSlider(!showVolumeSlider)}
+            className="text-muted-foreground dark:aria-pressed:text-foreground size-8">
+            {isMuted || volume === 0 ?
+              <VolumeOffIcon />
+            : <Volume2Icon />}
+          </Toggle>
+
+          {showVolumeSlider && (
+            <div
+              className="bg-background border-border animate-in fade-in slide-in-from-bottom-2 absolute bottom-full left-1/2 z-50 mb-2 -translate-x-1/2 rounded-md border px-0 py-4 shadow-xl lg:mb-4"
+              onPointerDown={(e) => e.stopPropagation()}>
+              <div className="flex flex-col items-center gap-3">
+                <input
+                  min="0"
+                  max="1"
+                  step="0.01"
+                  type="range"
+                  value={isMuted ? 0 : volume}
+                  onChange={handleVolumeChange}
+                  className="bg-secondary h-28 w-1 cursor-pointer appearance-none rounded-full [direction:rtl] [writing-mode:vertical-lr]"
+                />
+                <div className="text-foreground text-6 w-10 text-center">
+                  {Math.round((isMuted ? 0 : volume) * 100)}%
+                </div>
+              </div>
+              {/* Arrow */}
+              <div className="absolute top-full left-1/2 -mt-px -translate-x-1/2 border-8 border-transparent border-t-inherit" />
+            </div>
+          )}
+        </div>
+
+        <Button
+          size="sm"
+          onClick={() => playSound()}
+          className="hover:text-muted-foreground text-background dark:text-foreground dark:bg-muted bg-muted-foreground/60 border-0 hover:bg-blue-400 focus-visible:ring-offset-2 dark:hover:bg-blue-600"
+          disabled={soundName === "none" || isMuted}>
+          <span className="text-6 md:text-5">Play</span>
+        </Button>
+      </div>
+    </div>
+  )
+}
