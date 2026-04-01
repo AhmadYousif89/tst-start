@@ -273,6 +273,7 @@
 
 @utility animate-blink {
   animation: blink 1s step-end infinite;
+  animation-timing-function: ease-in-out;
 }
 
 @keyframes ring-pulse {

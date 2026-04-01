@@ -71,10 +71,7 @@ export const EngineProvider = ({ children, data }: ProviderProps) => {
   useHotkey(
     "Mod+R",
     () => {
-      if (statusRef.current === "typing" || statusRef.current === "paused") {
-        console.log("resetting session")
-        resetSession()
-      }
+      if (state.status === "typing" || state.status === "paused") resetSession()
     },
     { requireReset: true },
   )
@@ -83,6 +80,7 @@ export const EngineProvider = ({ children, data }: ProviderProps) => {
 
   const id = state.textData._id.toString()
 
+  // Fetch new text when language changes
   useQuery({
     queryKey: ["random-text", language],
     queryFn: async () => {
@@ -113,6 +111,7 @@ export const EngineProvider = ({ children, data }: ProviderProps) => {
     statusRef.current = state.status
   }, [state.status])
 
+  // Set initial status to idle once text is loaded and language is synced
   useEffect(() => {
     if (isLoaded && state.status === "loading") {
       const isSynced = language === state.textData.language

@@ -1,4 +1,4 @@
-import { useState, useEffect, memo } from "react"
+import { useLayoutEffect, memo, useRef } from "react"
 
 import { cn } from "@/lib/utils"
 import { isRtlLang } from "./engine-utils"
@@ -8,12 +8,11 @@ import { useWindowResize } from "@/hooks/use-window-resize"
 
 export type CursorProps = {
   containerRef: React.RefObject<HTMLDivElement | null>
-  isFocused: boolean
   cursor?: number
   extraOffset?: number
   cursorStyle?: CursorStyle
-  isReplaying?: boolean
   isRTL?: boolean
+  isReplaying?: boolean
 }
 
 type CursorPosition = {
@@ -35,6 +34,7 @@ export const Cursor = memo(
     const config = useEngineConfig()
     const keystroke = useEngineKeystroke()
     const { width: windowWidth } = useWindowResize()
+    const cursorIndicatorRef = useRef<HTMLDivElement>(null)
 
     const { status, showOverlay, textData, layout, isFocused } = config
     const cursor = cursorProp ?? keystroke.cursor
@@ -42,24 +42,21 @@ export const Cursor = memo(
     const configCursorStyle = config.cursorStyle
 
     const isRTL = isRTLProp || isRtlLang(textData?.language)
-    const [position, setPosition] = useState<CursorPosition>({
-      top: 0,
-      left: 0,
-      width: 0,
-      height: 0,
-    })
-
     const cursorStyle = cursorStyleProp ?? configCursorStyle ?? "pip"
     const isBoxy = cursorStyle === "box" || cursorStyle === "underline"
     const layoutVersion = layout.version
 
-    useEffect(() => {
-      const container = containerRef.current
-      if (!container) return
+    useLayoutEffect(() => {
+      let rafId: number | null = null
 
-      const cursorEl = container.querySelector(".active-cursor") as HTMLElement
+      const measureAndApply = () => {
+        const container = containerRef.current
+        const indicator = cursorIndicatorRef.current
+        if (!container || !indicator) return false
 
-      if (cursorEl) {
+        const cursorEl = container.querySelector(".active-cursor") as HTMLElement | null
+        if (!cursorEl) return false
+
         const containerRect = container.getBoundingClientRect()
         const cursorRect = cursorEl.getBoundingClientRect()
         const { scrollTop, scrollLeft } = container
@@ -70,12 +67,36 @@ export const Cursor = memo(
             : cursorRect.right - containerRect.left + scrollLeft
           : cursorRect.left - containerRect.left + scrollLeft
 
-        setPosition({
+        const position: CursorPosition = {
           top: cursorRect.top - containerRect.top + scrollTop,
           left,
           width: cursorRect.width,
           height: cursorRect.height,
-        })
+        }
+
+        const width = isBoxy ? position.width || 0 : 2
+        const height =
+          cursorStyle === "underline" ? 2 : (position.height || 0) * (isRTL ? 0.85 : 0.9)
+        const top =
+          cursorStyle === "underline" ?
+            position.top - (isRTL ? 3 : 0) + (position.height || 0)
+          : position.top + (isRTL ? 2 : 0) + ((position.height || 0) - height) / 2
+
+        indicator.style.left = `${left}px`
+        indicator.style.top = `${top}px`
+        indicator.style.width = `${width}px`
+        indicator.style.height = `${height}px`
+
+        return true
+      }
+
+      const hasBeenMeasured = measureAndApply()
+      if (!hasBeenMeasured) {
+        rafId = requestAnimationFrame(measureAndApply)
+      }
+
+      return () => {
+        if (rafId !== null) cancelAnimationFrame(rafId)
       }
     }, [
       textData.text,
@@ -86,28 +107,18 @@ export const Cursor = memo(
       isBoxy,
       layoutVersion,
       windowWidth,
+      showOverlay,
     ])
 
-    const left = position.left
-    const width = isBoxy ? position.width || 0 : 2
-    const height =
-      cursorStyle === "underline" ? 2 : (position.height || 0) * (isRTL ? 0.85 : 0.9)
-    const top =
-      cursorStyle === "underline" ?
-        position.top - (isRTL ? 3 : 0) + (position.height || 0)
-      : position.top + (isRTL ? 2 : 0) + ((position.height || 0) - height) / 2
+    const shouldBlink = status !== "typing" && !isReplaying && !showOverlay && isFocused
 
     return (
       <div
-        style={{ top, left, width, height }}
+        ref={cursorIndicatorRef}
         className={cn(
-          "pointer-events-none absolute z-10 rounded bg-blue-400/90 transition-[left,top,width,height] duration-0 will-change-[left,top,width,height]",
-          (status === "typing" || isReplaying) && "duration-150",
-          !isReplaying &&
-            status !== "typing" &&
-            !showOverlay &&
-            isFocused &&
-            "animate-blink ease-linear",
+          "pointer-events-none absolute z-10 rounded bg-blue-400/90 transition-all duration-50 will-change-[left,top,width,height]",
+          (status === "typing" || isReplaying) && "duration-200",
+          shouldBlink && "animate-blink",
           showOverlay && "invisible opacity-0",
           cursorStyle === "box" && "border-2 border-blue-400/90 bg-transparent",
         )}

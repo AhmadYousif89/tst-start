@@ -20,8 +20,6 @@ export const initialState: EngineState = {
 }
 
 export const engineReducer = (state: EngineState, action: EngineAction): EngineState => {
-  console.log("ACTION: ", action)
-
   switch (action.type) {
     case "RESET": {
       const isFocused = action.shouldFocus ?? state.isFocused

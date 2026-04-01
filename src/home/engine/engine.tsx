@@ -6,14 +6,12 @@ import { EngineOverlay } from "./overlay"
 import { TypingInput } from "./typing-input"
 import { TimeWarning } from "../main/timer-warning"
 
-import { useEngineActions, useEngineConfig } from "../context/engine.context"
 import { useMouseShake } from "@/hooks/use-mouse-shake"
+import { useEngineActions, useEngineConfig } from "../context/engine.context"
 
 export const EngineContainer = () => {
   const { setFocused, setStatus } = useEngineActions()
-  const { textData, status, isFocused, isImmersive } = useEngineConfig()
-
-  console.log("STATUS: ", status)
+  const { textData, status, isImmersive } = useEngineConfig()
 
   const containerRef = useRef<HTMLDivElement>(null)
   const typingInputRef = useRef<HTMLTextAreaElement>(null)
@@ -57,14 +55,8 @@ export const EngineContainer = () => {
           containerRef={containerRef}
           typingInputRef={typingInputRef}
         />
-        <Words
-          characters={characters}
-          containerRef={containerRef}
-        />
-        <Cursor
-          isFocused={isFocused}
-          containerRef={containerRef}
-        />
+        <Words characters={characters} />
+        <Cursor containerRef={containerRef} />
       </div>
     </div>
   )

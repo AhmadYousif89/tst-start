@@ -1,4 +1,4 @@
-import { memo, useMemo, useEffect, useRef, type RefObject, useCallback } from "react"
+import { memo, useMemo, useEffect, useRef, useCallback } from "react"
 
 import { cn } from "@/lib/utils"
 import { Word } from "./word"
@@ -29,13 +29,14 @@ export const wordsGroup = (characters: string[]) => {
 
 type WordsProps = {
   characters: string[]
-  containerRef: RefObject<HTMLDivElement | null>
 }
 
-export const Words = memo(({ characters, containerRef }: WordsProps) => {
+export const Words = memo(({ characters }: WordsProps) => {
   const configCtx = useEngineConfig()
   const keystrokeCtx = useEngineKeystroke()
   const { updateLayout } = useEngineActions()
+
+  const wordsRef = useRef<HTMLDivElement>(null)
 
   const { cursor, extraOffset, keystrokes, lockedCursorRef } = keystrokeCtx
   const { textData, status, layout, showOverlay } = configCtx
@@ -51,7 +52,7 @@ export const Words = memo(({ characters, containerRef }: WordsProps) => {
   const rowBreaks = useRef<number[]>([])
 
   const calculateRowBreaks = useCallback(() => {
-    const container = containerRef.current
+    const container = wordsRef.current
     if (!container) return
 
     const wordElements = container.querySelectorAll("[data-word-index]")
@@ -76,14 +77,14 @@ export const Words = memo(({ characters, containerRef }: WordsProps) => {
       }
     }
     rowBreaks.current = breaks
-  }, [containerRef])
+  }, [])
 
   // Scroll to top and reset breaks when cursor is 0 (new test/reset)
   useEffect(() => {
     if (cursor === 0 && status === "typing") {
       updateLayout({ shouldReset: true })
       lockedCursorRef.current = 0
-      containerRef.current?.scrollTo({ top: 0, behavior: "smooth" })
+      wordsRef.current?.scrollTo({ top: 0, behavior: "smooth" })
       calculateRowBreaks()
     }
   }, [cursor, status, updateLayout, calculateRowBreaks])
@@ -100,7 +101,7 @@ export const Words = memo(({ characters, containerRef }: WordsProps) => {
 
   // Calculate row breaks on mount and resize
   useEffect(() => {
-    const container = containerRef.current
+    const container = wordsRef.current
     if (!container) return
 
     calculateRowBreaks()
@@ -149,7 +150,7 @@ export const Words = memo(({ characters, containerRef }: WordsProps) => {
 
   return (
     <div
-      ref={containerRef}
+      ref={wordsRef}
       dir={isRTL ? "rtl" : "ltr"}
       className={cn(
         "relative flex flex-wrap transition-[opacity,filter] duration-300 ease-in-out select-none",
