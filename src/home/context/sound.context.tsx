@@ -57,7 +57,7 @@ export const SoundProvider = ({ children }: { children: React.ReactNode }) => {
 
   const loadSoundSet = useCallback(
     async (name: SoundNames) => {
-      if (name === "none" || !name) return []
+      if (!name) return []
       if (buffersCacheRef.current.has(name)) return buffersCacheRef.current.get(name)!
 
       const ctx = initAudioCtx()
@@ -110,7 +110,6 @@ export const SoundProvider = ({ children }: { children: React.ReactNode }) => {
       if (ctx.state === "suspended") await ctx.resume()
 
       if (type === "keystroke") {
-        if (soundName === "none") return
         const buffers = await loadSoundSet(soundName)
         if (buffers.length === 0) return
 
@@ -154,7 +153,7 @@ export const SoundProvider = ({ children }: { children: React.ReactNode }) => {
 
   // Preload sound set whenever it changes
   useEffect(() => {
-    if (soundName !== "none") loadSoundSet(soundName)
+    if (soundName) loadSoundSet(soundName)
   }, [soundName, loadSoundSet])
 
   // Clean up on unmount

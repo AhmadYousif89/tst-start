@@ -1,4 +1,4 @@
-export type SoundName =
+export type SoundNames =
   | "beep"
   | "click"
   | "creamy"
@@ -9,8 +9,6 @@ export type SoundName =
   | "rubber"
   | "typewriter"
 
-export type SoundNames = SoundName | "none"
-
 export type SoundType = "keystroke" | "warning" | "flash"
 
 export type SoundSettings = {
@@ -20,7 +18,7 @@ export type SoundSettings = {
 }
 
 export type SoundFile = Record<
-  SoundName,
+  SoundNames,
   { folder: string; prefix: string; count: number }
 >
 
