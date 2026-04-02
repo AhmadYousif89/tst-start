@@ -65,7 +65,7 @@ export const Header = () => {
           </DrawerTrigger>
           <DrawerContent
             onCloseAutoFocus={(e) => e.preventDefault()}
-            className="mx-auto xl:max-w-[1216px] [&[data-vaul-drawer-direction][data-vaul-drawer-direction]]:rounded-none">
+            className="mx-auto xl:max-w-304 [&[data-vaul-drawer-direction][data-vaul-drawer-direction]]:rounded-none">
             <DrawerHeader>
               <DrawerTitle>Settings</DrawerTitle>
               <DrawerDescription>Configure your typing settings</DrawerDescription>

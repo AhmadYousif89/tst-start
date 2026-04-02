@@ -8,10 +8,10 @@ const toggleVariants = cva(
   [
     "group/toggle inline-flex items-center justify-center gap-1 rounded-md  whitespace-nowrap transition-all outline-none hover:text-foreground cursor-pointer",
 
-    "focus-visible:ring-offset-background focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-2 focus-visible:ring-offset-2",
+    "focus-visible:ring-offset-background focus-visible:ring-ring focus-visible:ring-2 focus-visible:ring-offset-2",
 
-    "data-[state=on]:text-foreground data-[state=on]:border-none data-[state=on]:bg-blue-400",
-    "dark:data-[state=on]:bg-blue-600 dark:data-[state=on]:text-foreground",
+    "data-[state=on]:text-[white] data-[state=on]:border-transparent data-[state=on]:bg-blue-400",
+    "dark:data-[state=on]:bg-blue-600 dark:data-[state=on]:text-[white]",
 
     "disabled:pointer-events-none disabled:opacity-50",
 

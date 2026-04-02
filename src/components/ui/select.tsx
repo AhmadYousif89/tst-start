@@ -49,13 +49,13 @@ function SelectTrigger({
       data-slot="select-trigger"
       data-size={size}
       className={cn(
-        "data-placeholder:bg-input/50 data-placeholder:hover:bg-input/70 data-placeholder:text-foreground flex w-fit cursor-pointer items-center justify-between gap-1.5 rounded-md border-transparent bg-transparent py-2 pr-2 pl-2.5 whitespace-nowrap transition-colors outline-none select-none",
+        "group data-placeholder:bg-accent data-placeholder:hover:bg-input/50 data-placeholder:text-muted-foreground flex w-fit cursor-pointer items-center justify-between gap-1.5 rounded-md border-transparent bg-transparent py-2 pr-2 pl-2.5 whitespace-nowrap transition-colors outline-none select-none",
 
         "data-[size=default]:h-8 data-[size=sm]:h-7 data-[size=sm]:rounded-[min(var(--radius-md),10px)] *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-1.5",
 
         "disabled:cursor-not-allowed disabled:opacity-50",
         "[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
-        "focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-offset-background focus-visible:ring-2 focus-visible:ring-offset-2",
+        "focus-visible:border-ring focus-visible:ring-ring focus-visible:ring-offset-background focus-visible:ring-2 focus-visible:ring-offset-2",
         "aria-invalid:border-destructive aria-invalid:ring-destructive/20 aria-invalid:ring-3",
         "dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40",
         className,
@@ -63,7 +63,7 @@ function SelectTrigger({
       {...props}>
       {children}
       <SelectPrimitive.Icon asChild>
-        <ChevronDownIcon className="text-foreground pointer-events-none size-4" />
+        <ChevronDownIcon className="text-foreground pointer-events-none size-4 group-data-[icon=hide]:hidden" />
       </SelectPrimitive.Icon>
     </SelectPrimitive.Trigger>
   )
@@ -82,7 +82,7 @@ function SelectContent({
         data-slot="select-content"
         data-align-trigger={position === "item-aligned"}
         className={cn(
-          "bg-popover text-popover-foreground ring-foreground/10 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95 relative z-50 max-h-(--radix-select-content-available-height) min-w-36 origin-(--radix-select-content-transform-origin) overflow-x-hidden overflow-y-auto rounded-md shadow-md ring-1 duration-100 data-[align-trigger=true]:animate-none",
+          "group/content bg-popover text-muted-foreground ring-foreground/10 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95 relative z-50 max-h-(--radix-select-content-available-height) min-w-36 origin-(--radix-select-content-transform-origin) overflow-x-hidden overflow-y-auto rounded-md shadow-md ring-1 duration-100 data-[align-trigger=true]:animate-none",
           position === "popper" &&
             "data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1",
           className,
@@ -127,21 +127,21 @@ function SelectItem({
     <SelectPrimitive.Item
       data-slot="select-item"
       className={cn(
-        "group text-6 md:text-5 border border-transparent",
-        "focus:border-blue-600 focus:text-blue-600 data-[state=checked]:text-blue-600",
-        "dark:focus:border-blue-400 dark:focus:text-blue-400 dark:data-[state=checked]:text-blue-400",
-        "relative flex w-full cursor-default items-center gap-2 rounded-sm py-2 pr-2 pl-8 outline-hidden select-none",
+        "group text-6 border border-transparent",
+        "focus:border-blue-600 focus:text-blue-600 data-checked:text-blue-600",
+        "dark:focus:border-blue-400 dark:focus:text-blue-400 dark:data-checked:text-blue-400",
+        "relative flex w-full cursor-default items-center gap-2 rounded-sm py-1.5 pr-2 pl-8 outline-hidden select-none",
         "data-checked:border-blue-600 data-disabled:pointer-events-none data-disabled:opacity-50 dark:data-checked:border-blue-400",
         "[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 *:[span]:last:flex *:[span]:last:items-center *:[span]:last:gap-2",
         className,
       )}
       {...props}>
-      <span className="pointer-events-none absolute left-1.5 flex size-4 items-center justify-center">
-        <CircleIcon className="size-5" />
+      <span className="pointer-events-none absolute left-1.5 flex size-4 items-center justify-center group-data-[icon=hide]/content:hidden">
+        <CircleIcon className="size-4" />
       </span>
-      <span className="pointer-events-none absolute left-1.5 flex size-4 items-center justify-center">
+      <span className="pointer-events-none absolute left-1.5 flex items-center justify-center group-data-[indicator=hide]/content:hidden">
         <SelectPrimitive.ItemIndicator>
-          <DotIcon className="scale-200" />
+          <DotIcon className="scale-175" />
         </SelectPrimitive.ItemIndicator>
       </span>
       <SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>
