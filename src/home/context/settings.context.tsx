@@ -30,11 +30,8 @@ type SettingsAction =
   | { type: "SYNC_SETTINGS"; settings: Partial<EngineSettings> }
   | { type: "UP_SYNC_COMPLETE" }
 
-const stored = getStoredSettings()
-
 const initialState: SettingsState = {
-  ...stored,
-  ...(stored.language ? { language: stored.language } : { language: "en" }),
+  ...getStoredSettings(),
   isLoaded: false,
   settingsDidUpdate: false,
 }

@@ -19,8 +19,11 @@ export const getStoredSettings = (key: string = STORAGE_KEY) => {
   if (typeof window === "undefined") return DEFAULT_SETTINGS
   try {
     const stored = localStorage.getItem(key)
-    const result = stored ? JSON.parse(stored) : DEFAULT_SETTINGS
-    return result as EngineSettings
+    const result = {
+      ...DEFAULT_SETTINGS,
+      ...JSON.parse(stored ?? "{}"),
+    } as EngineSettings
+    return result
   } catch (error) {
     console.warn(`Error reading localStorage key "${key}":`, error)
     return DEFAULT_SETTINGS

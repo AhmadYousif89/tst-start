@@ -4,7 +4,7 @@ import {
   calculateAccuracy,
   calculateRawWpm,
   calculateConsistency,
-} from "../../../engine/engine-logic"
+} from "../../../engine/logic"
 import { Keystroke } from "../../../context/engine.types"
 
 describe("calculateWpm", () => {

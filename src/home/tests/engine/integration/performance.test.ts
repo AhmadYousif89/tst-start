@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest"
+import { Keystroke } from "@/home/context/engine.types"
 import { simulateTyping, calculateMetrics } from "./helpers"
-import { Keystroke } from "../../../context/engine.types"
 
 describe("Performance Metrics: Raw WPM and Consistency", () => {
   it("calculates high raw WPM even with many errors", () => {

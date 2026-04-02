@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest"
 import { simulateTyping, calculateMetrics } from "./helpers"
-import { getCharStates } from "../../../engine/engine-logic"
+import { getCharStates } from "../../../engine/logic"
 
 describe("Integration: Typing Sessions", () => {
   const text = "hello"

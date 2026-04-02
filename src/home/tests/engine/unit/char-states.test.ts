@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest"
-import { getCharStates, isWordPerfect } from "../../../engine/engine-logic"
+import { getCharStates, isWordPerfect } from "../../../engine/logic"
 import { Keystroke, CharState } from "../../../context/engine.types"
 
 describe("getCharStates", () => {
