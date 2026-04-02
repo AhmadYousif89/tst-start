@@ -29,7 +29,7 @@ export const NextButton = ({ className, inResults }: Props) => {
       data: { id: textData._id.toString(), lang: textData.language },
     })
     if (newTextData) {
-      setTextData(newTextData, { shouldFocus: true })
+      setTextData(newTextData)
     }
   }
 

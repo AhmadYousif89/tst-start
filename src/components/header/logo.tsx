@@ -5,8 +5,8 @@ import LogoIcon from "/assets/images/logo.svg"
 
 import { cn } from "@/lib/utils"
 import { getRandomText } from "@/server/data"
-import { useEngineConfig, useEngineActions } from "@/home/context/engine.context"
 import { useTextSettings } from "@/home/context/settings.context"
+import { useEngineConfig, useEngineActions } from "@/home/context/engine.context"
 
 export const Logo = () => {
   const { language } = useTextSettings()
@@ -20,7 +20,7 @@ export const Logo = () => {
     <button
       onClick={async () => {
         const newTextData = await getRandomPassage({ data: { id, language } })
-        if (newTextData) setTextData(newTextData, { shouldFocus: true })
+        if (newTextData) setTextData(newTextData)
       }}
       className={cn(
         "flex cursor-pointer items-center gap-2 transition-[filter] duration-1000 ease-in-out",

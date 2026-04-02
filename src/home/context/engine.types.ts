@@ -98,9 +98,9 @@ export type EngineActionsCtxType = {
   resumeSession: () => void
   getTimeElapsed: () => number
   setStatus: (s: EngineStatus) => void
-  setTextMode: (m: TextMode, opts?: ResetOptions) => void
-  setTextLanguage: (lang: TextLanguage, opts?: ResetOptions) => void
-  setTextData: (textData: TextDoc, opts?: ResetOptions) => void
+  setTextMode: (m: TextMode) => void
+  setTextLanguage: (lang: TextLanguage, shouldFocus?: boolean) => void
+  setTextData: (textData: TextDoc, shouldFocus?: boolean) => void
   setFocused: (isFocused: boolean) => void
   updateLayout: (opts?: { shouldReset?: boolean; newStartIndex?: number }) => void
   setCursor: (cursor: number | ((prev: number) => number), extraOffset?: number) => void

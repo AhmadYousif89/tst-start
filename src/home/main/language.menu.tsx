@@ -49,7 +49,7 @@ export const LanguageMenu = () => {
             <DropdownMenuItem
               key={lang.value}
               onSelect={() => {
-                setTextLanguage(lang.value, { shouldFocus: true })
+                setTextLanguage(lang.value)
               }}
               className={cn(
                 "text-muted-foreground py-2 font-mono",

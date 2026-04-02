@@ -25,9 +25,9 @@ import {
   ResetOptions,
 } from "./engine.types"
 import { engineReducer, initialState } from "./engine.reducer"
-import { calculateWpm, calculateAccuracy, getInitialTime } from "../engine/engine-logic"
-import { getRandomText } from "@/server/data"
+import { calculateWpm, calculateAccuracy, getInitialTime } from "../engine/logic"
 import { useTextSettings } from "./settings.context"
+import { getRandomText } from "@/server/data"
 
 const EngineConfigCtx = createContext<EngineConfigCtxType | undefined>(undefined)
 
@@ -71,7 +71,8 @@ export const EngineProvider = ({ children, data }: ProviderProps) => {
   useHotkey(
     "Mod+R",
     () => {
-      if (state.status === "typing" || state.status === "paused") resetSession()
+      if (state.status === "idle") return
+      resetSession()
     },
     { requireReset: true },
   )
@@ -88,7 +89,7 @@ export const EngineProvider = ({ children, data }: ProviderProps) => {
         data: { id, language },
       })
       if (text) {
-        setTextData(text, { shouldFocus: true })
+        setTextData(text)
         return text
       }
       return data
@@ -209,25 +210,25 @@ export const EngineProvider = ({ children, data }: ProviderProps) => {
   }, [getTimeElapsed])
 
   const setTextData = useCallback(
-    (newData: TextDoc, opts?: ResetOptions) => {
+    (newData: TextDoc, shouldFocus: boolean = true) => {
       dispatch({ type: "SET_TEXT", textData: newData })
-      resetSession({ status: "idle", ...opts })
+      resetSession({ status: "idle", shouldFocus })
     },
     [resetSession],
   )
 
   const setTextLanguage = useCallback(
-    async (newLanguage: TextLanguage, opts?: ResetOptions) => {
+    async (newLanguage: TextLanguage, shouldFocus: boolean = true) => {
       if (newLanguage === language) {
         const newTextData = await getRandomTextFn({
           data: { id, language: newLanguage },
         })
-        if (newTextData) setTextData(newTextData, opts)
+        if (newTextData) setTextData(newTextData, shouldFocus)
         return
       }
       setGlobalLanguage(newLanguage)
     },
-    [getRandomTextFn, language, id, setTextData, setGlobalLanguage],
+    [language, id, getRandomTextFn, setTextData, setGlobalLanguage],
   )
 
   const setCursor = useCallback(
@@ -263,9 +264,9 @@ export const EngineProvider = ({ children, data }: ProviderProps) => {
   )
 
   const setTextMode = useCallback(
-    (newMode: TextMode, opts?: ResetOptions) => {
+    (newMode: TextMode, shouldFocus: boolean = true) => {
       setGlobalMode(newMode)
-      resetSession({ newMode, status: "idle", ...opts })
+      resetSession({ newMode, status: "idle", shouldFocus })
     },
     [setGlobalMode, resetSession],
   )
