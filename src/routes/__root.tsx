@@ -3,11 +3,12 @@ import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools"
 import { TanStackDevtools } from "@tanstack/react-devtools"
 import type { QueryClient } from "@tanstack/react-query"
 
-import TanStackQueryDevtools from "../integrations/tanstack-query/devtools"
-
-import styles from "../styles.css?url"
+import TanStackQueryDevtools from "@/integrations/tanstack-query/devtools"
 import { ThemeProvider } from "@/integrations/next-themes/theme-provider"
 import { TooltipProvider } from "@/components/ui/tooltip"
+
+import iconUrl from "../icon.svg?url"
+import styles from "../styles.css?url"
 
 interface MyRouterContext {
   queryClient: QueryClient
@@ -27,12 +28,11 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
         name: "keywords",
         content: "typing test, wpm, typing speed, typing practice, typing test online",
       },
-      {
-        name: "author",
-        content: "Typing Speed Test",
-      },
     ],
-    links: [{ rel: "stylesheet", href: styles }],
+    links: [
+      { rel: "icon", type: "image/svg+xml", href: iconUrl },
+      { rel: "stylesheet", href: styles },
+    ],
   }),
   shellComponent: RootDocument,
 })

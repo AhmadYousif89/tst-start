@@ -22,16 +22,14 @@ export const Home = () => {
   }
 
   return (
-    <div className="animate-in fade-in container duration-500">
+    <div className="container">
       <Header />
-      <main className="grid grow grid-rows-[auto_1fr]">
-        {status !== "finished" ?
-          <MainContent />
-        : <ResultProvider>
-            <Results />
-          </ResultProvider>
-        }
-      </main>
+      {status !== "finished" ?
+        <MainContent />
+      : <ResultProvider>
+          <Results />
+        </ResultProvider>
+      }
       <Footer />
     </div>
   )

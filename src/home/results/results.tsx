@@ -69,7 +69,7 @@ export const Results = () => {
   }
 
   return (
-    <div className="py-4 md:py-6">
+    <main className="animate-in fade-in grow py-4 duration-1000 md:py-6">
       <div
         id="result-screen"
         className={cn(
@@ -88,6 +88,6 @@ export const Results = () => {
           isNewRecord={isNewRecord}
         />
       </div>
-    </div>
+    </main>
   )
 }
