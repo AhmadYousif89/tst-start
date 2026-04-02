@@ -3,16 +3,8 @@ import { ObjectId } from "mongodb"
 import connectToDB from "@/lib/db"
 import { TextDoc } from "@/lib/types"
 import { createServerFn } from "@tanstack/react-start"
-import { TextCategory, TextLanguage } from "@/home/context/engine.types"
-
-type ParsedLang = {
-  lang: TextLanguage
-  cat: TextCategory
-}
-const parseLanguage = (langStr: TextLanguage): ParsedLang => {
-  const [lang, cat = "general"] = langStr.split(":")
-  return { lang, cat } as ParsedLang
-}
+import { TextLanguage } from "@/home/context/engine.types"
+import { getLangCat } from "@/home/engine/utils"
 
 export const getInitialText = createServerFn().handler(async () => {
   try {
@@ -38,7 +30,7 @@ export const getRandomText = createServerFn()
   .handler(async ({ data }) => {
     console.log("SERVER: FETCHING RANDOM TEXT")
     const { id, language } = data
-    const { lang, cat } = parseLanguage(language)
+    const { lang, cat } = getLangCat(language)
     try {
       const { db } = await connectToDB()
       const textDocs = await db

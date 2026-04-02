@@ -27,7 +27,7 @@ export const LanguageMenu = () => {
 
   const getRandomTextFn = useServerFn(getRandomText)
   const id = textData._id.toString()
-  const currentLang = LANGS.find((l) => l.value === language) || LANGS[1]
+  const currentLang = LANGS.find((l) => l.value === language)
 
   const handleLanguage = async (lang: TextLanguage) => {
     try {
@@ -54,7 +54,7 @@ export const LanguageMenu = () => {
             variant="ghost"
             className="text-muted-foreground grid grid-cols-[20px_1fr] font-mono hover:bg-transparent! hover:text-blue-600 focus-visible:ring-offset-2 dark:hover:text-blue-400">
             <GlobeIcon />
-            <span>{currentLang.label}</span>
+            <span>{currentLang?.label ?? "Select language"}</span>
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent

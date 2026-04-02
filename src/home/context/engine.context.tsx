@@ -12,6 +12,7 @@ import { useServerFn } from "@tanstack/react-start"
 import { useQuery } from "@tanstack/react-query"
 
 import { TextDoc } from "@/lib/types"
+import { getRandomText } from "@/server/data"
 import {
   Keystroke,
   EngineStatus,
@@ -21,10 +22,10 @@ import {
   EngineKeystrokeCtxType,
   ResetOptions,
 } from "./engine.types"
+import { isLanguageSynced } from "../engine/utils"
+import { useTextSettings } from "./settings.context"
 import { engineReducer, initialState } from "./engine.reducer"
 import { calculateWpm, calculateAccuracy, getInitialTime } from "../engine/logic"
-import { useTextSettings } from "./settings.context"
-import { getRandomText } from "@/server/data"
 
 const EngineConfigCtx = createContext<EngineConfigCtxType | undefined>(undefined)
 
@@ -83,7 +84,7 @@ export const EngineProvider = ({ children, data }: ProviderProps) => {
       }
       return data
     },
-    enabled: isLoaded && language !== state.textData.language,
+    enabled: () => isLoaded && !isLanguageSynced(language, state.textData),
   })
 
   const isImmersive = state.status === "typing"
@@ -104,12 +105,12 @@ export const EngineProvider = ({ children, data }: ProviderProps) => {
   // Set initial status to idle once text is loaded and language is synced
   useEffect(() => {
     if (isLoaded && state.status === "loading") {
-      const isSynced = language === state.textData.language
+      const isSynced = isLanguageSynced(language, state.textData)
       if (isSynced) {
         dispatch({ type: "SET_STATUS", status: "idle" })
       }
     }
-  }, [isLoaded, language, state.textData.language, state.status])
+  }, [isLoaded, language, state.textData.language, state.textData.category, state.status])
 
   // Pause session after a short delay when focus is lost during typing
   useEffect(() => {
