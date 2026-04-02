@@ -93,7 +93,7 @@ export const ReplaySection = () => {
                 size="icon"
                 variant="ghost"
                 onClick={isPlaying ? pause : play}
-                className="text-muted size-6 rounded-full focus-visible:border-transparent"
+                className="text-muted-foreground/75 size-6 rounded-full focus-visible:border-transparent"
                 aria-label="play/pause"
                 title="Play/Pause">
                 {isPlaying ?
@@ -105,7 +105,7 @@ export const ReplaySection = () => {
                 size="icon"
                 variant="ghost"
                 onClick={reset}
-                className="text-muted size-6 rounded-full focus-visible:border-transparent"
+                className="text-muted-foreground/75 size-6 rounded-full focus-visible:border-transparent"
                 aria-label="replay"
                 title="Reset">
                 <ReplyIcon className="size-4" />
@@ -134,9 +134,8 @@ export const ReplaySection = () => {
           isRTL ? "font-arabic" : "font-mono",
         )}>
         <Cursor
-          isRTL={isRTL}
           containerRef={containerRef}
-          isFocused={isPlaying}
+          isRTL={isRTL}
           cursor={cursorIndex}
           extraOffset={extraOffset}
           cursorStyle="underline"

@@ -58,7 +58,7 @@ export const AnalyticSection = ({
         <div
           className={cn(
             isScreenshotting ? "grid-rows-[0fr]" : (
-              "grid w-full transition-[grid-template-rows] duration-300 ease-in-out"
+              "mt-4 grid w-full transition-[grid-template-rows] duration-300 ease-in-out"
             ),
             effectiveShowReplay ? "grid-rows-[1fr]" : "grid-rows-[0fr]",
           )}

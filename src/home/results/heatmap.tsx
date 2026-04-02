@@ -24,18 +24,28 @@ const HEATMAP_COLORS = [
 
 type WordItemProps = {
   word: string
-  stats: WordStats | undefined
+  stats: WordStats | null
   isHeatmapVisible: boolean
   isRTL: boolean
 }
 
 const WordItem = memo(({ word, stats, isHeatmapVisible, isRTL }: WordItemProps) => {
-  const wpm = stats?.wpm || 0
-  const hasError = stats?.hasError
-  const errorIndices = stats?.errorCharIndices
-  const extras = stats?.extras
-  const skipIndex = stats?.skipIndex
-  const bucket = stats?.bucket
+  if (!stats) {
+    return (
+      <div
+        className={cn("text-muted cursor-default", isRTL ? "font-arabic" : "font-mono")}>
+        {word}
+      </div>
+    )
+  }
+  const {
+    wpm,
+    hasError,
+    errorCharIndices: errorIndices,
+    extras,
+    skipIndex,
+    bucket,
+  } = stats
 
   const colorVariable =
     isHeatmapVisible && bucket !== undefined ? HEATMAP_COLORS[bucket] : undefined
@@ -87,29 +97,14 @@ const WordItem = memo(({ word, stats, isHeatmapVisible, isRTL }: WordItemProps) 
     </span>
   )
 
-  if (wpm === 0)
-    return (
-      <div
-        style={{ color: colorVariable }}
-        className={cn(
-          "cursor-default dark:opacity-60",
-          isRTL ? "font-arabic" : "font-mono",
-          isHeatmapVisible ? "text-muted" : "text-muted-foreground",
-        )}>
-        {content}
-      </div>
-    )
-
   return (
     <ResponsiveTooltip delayDuration={0}>
       <ResponsiveTooltipTrigger asChild>
         <div
           style={{ color: colorVariable }}
           className={cn(
-            "cursor-default",
+            "text-muted-foreground cursor-default",
             isRTL ? "font-arabic" : "font-mono",
-            isHeatmapVisible ? "text-muted" : "text-muted-foreground",
-            wpm === 0 && "dark:opacity-60",
           )}>
           {content}
         </div>
@@ -171,11 +166,11 @@ export const HeatmapHistory = () => {
               <Button
                 size="icon"
                 variant="ghost"
-                aria-pressed={isHeatmapVisible || isScreenshotting}
                 aria-label="Toggle Heatmap"
+                aria-pressed={isHeatmapVisible || isScreenshotting}
                 className="group size-6 rounded-full hover:bg-transparent! focus-visible:border-transparent"
                 onClick={() => setHeatmapVisibility(!isHeatmapVisible)}>
-                <HeatmapIcon className="text-muted group-hover:text-red group-aria-pressed:text-red size-5 md:size-6" />
+                <HeatmapIcon className="text-muted-foreground/75 group-hover:text-red group-aria-pressed:text-red size-5 md:size-6" />
               </Button>
             </TooltipTrigger>
             <TooltipContent side="top">
@@ -210,15 +205,18 @@ export const HeatmapHistory = () => {
           "text-5 flex flex-wrap items-baseline gap-x-3.25 select-none",
           isRTL ? "text-right" : "text-left",
         )}>
-        {words.map((word, i) => (
-          <WordItem
-            key={i}
-            word={word}
-            stats={wordStatsMap.get(i)}
-            isHeatmapVisible={effectiveIsEnabled}
-            isRTL={isRTL}
-          />
-        ))}
+        {words.map((word, i) => {
+          const stats = wordStatsMap.get(i)
+          return (
+            <WordItem
+              key={i}
+              word={word}
+              stats={stats ?? null}
+              isHeatmapVisible={effectiveIsEnabled}
+              isRTL={isRTL}
+            />
+          )
+        })}
       </div>
     </div>
   )
