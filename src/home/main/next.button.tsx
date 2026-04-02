@@ -28,9 +28,7 @@ export const NextButton = ({ className, inResults }: Props) => {
     const newTextData = await getNextPassage({
       data: { id: textData._id.toString(), lang: textData.language },
     })
-    if (newTextData) {
-      setTextData(newTextData)
-    }
+    if (newTextData) setTextData(newTextData)
   }
 
   return (

@@ -20,9 +20,7 @@ export const RandomButton = () => {
       setFocused(false)
       setIsFetching(true)
       const newPassage = await getRandomPassage({ data: { id: currId, language } })
-      if (newPassage) {
-        setTextData(newPassage)
-      }
+      if (newPassage) setTextData(newPassage)
     } catch (error) {
       console.error("Error fetching random text data:", error)
     } finally {

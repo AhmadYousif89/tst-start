@@ -1,4 +1,4 @@
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { SettingsIcon } from "lucide-react"
 import { useHotkey } from "@tanstack/react-hotkeys"
 
@@ -18,11 +18,11 @@ import {
 } from "@/components/ui/drawer"
 import { Button } from "@/components/ui/button"
 import { SettingsPanel } from "@/components/settings-panel"
-import { useEngineActions, useEngineConfig } from "@/home/context/engine.context"
+import { useEngineConfig } from "@/home/context/engine.context"
 
 export const Header = () => {
-  const { showSettings, isImmersive } = useEngineConfig()
-  const { setShowSettings } = useEngineActions()
+  const { isImmersive } = useEngineConfig()
+  const [showSettings, setShowSettings] = useState(false)
 
   useHotkey("Mod+S", () => setShowSettings((pv) => !pv), { requireReset: true })
 

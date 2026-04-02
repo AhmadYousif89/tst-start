@@ -11,7 +11,6 @@ export const initialState: EngineState = {
   extraOffset: 0,
   isFocused: false,
   showOverlay: true,
-  showSettings: false,
   layout: {
     startIndex: 0,
     version: 0,
@@ -31,7 +30,6 @@ export const engineReducer = (state: EngineState, action: EngineAction): EngineS
         isFocused,
         showOverlay: isFocused ? false : status !== "finished",
         textData: state.textData,
-        showSettings: state.showSettings,
         timeLeft: action.timeLeft,
       }
     }
@@ -117,14 +115,6 @@ export const engineReducer = (state: EngineState, action: EngineAction): EngineS
           startIndex: 0,
           version: 0,
         },
-      }
-    case "SET_SHOW_SETTINGS":
-      return {
-        ...state,
-        showSettings:
-          typeof action.showSettings === "function" ?
-            action.showSettings(state.showSettings)
-          : action.showSettings,
       }
     case "UPDATE_LAYOUT":
       return {

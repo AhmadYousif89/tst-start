@@ -13,10 +13,7 @@ import { useQuery } from "@tanstack/react-query"
 
 import { TextDoc } from "@/lib/types"
 import {
-  TextMode,
   Keystroke,
-  CursorStyle,
-  TextLanguage,
   EngineStatus,
   EngineConfigCtxType,
   EngineMetricsCtxType,
@@ -43,15 +40,7 @@ type ProviderProps = {
 }
 
 export const EngineProvider = ({ children, data }: ProviderProps) => {
-  const {
-    mode,
-    language,
-    cursorStyle,
-    isLoaded,
-    setMode: setGlobalMode,
-    setLanguage: setGlobalLanguage,
-    setCursorStyle: setGlobalCursorStyle,
-  } = useTextSettings()
+  const { mode, language, isLoaded } = useTextSettings()
 
   const [state, dispatch] = useReducer(engineReducer, {
     ...initialState,
@@ -217,20 +206,6 @@ export const EngineProvider = ({ children, data }: ProviderProps) => {
     [resetSession],
   )
 
-  const setTextLanguage = useCallback(
-    async (newLanguage: TextLanguage, shouldFocus: boolean = true) => {
-      if (newLanguage === language) {
-        const newTextData = await getRandomTextFn({
-          data: { id, language: newLanguage },
-        })
-        if (newTextData) setTextData(newTextData, shouldFocus)
-        return
-      }
-      setGlobalLanguage(newLanguage)
-    },
-    [language, id, getRandomTextFn, setTextData, setGlobalLanguage],
-  )
-
   const setCursor = useCallback(
     (cursor: number | ((prev: number) => number), extraOffset?: number) => {
       dispatch({
@@ -254,26 +229,6 @@ export const EngineProvider = ({ children, data }: ProviderProps) => {
   const updateLayout = useCallback(
     (opts?: { shouldReset?: boolean; newStartIndex?: number }) => {
       dispatch({ type: "UPDATE_LAYOUT", ...opts })
-    },
-    [],
-  )
-
-  const setCursorStyle = useCallback(
-    (style: CursorStyle) => setGlobalCursorStyle(style),
-    [setGlobalCursorStyle],
-  )
-
-  const setTextMode = useCallback(
-    (newMode: TextMode, shouldFocus: boolean = true) => {
-      setGlobalMode(newMode)
-      resetSession({ newMode, status: "idle", shouldFocus })
-    },
-    [setGlobalMode, resetSession],
-  )
-
-  const setShowSettings = useCallback(
-    (showSettings: boolean | ((prev: boolean) => boolean)) => {
-      dispatch({ type: "SET_SHOW_SETTINGS", showSettings })
     },
     [],
   )
@@ -320,29 +275,25 @@ export const EngineProvider = ({ children, data }: ProviderProps) => {
   const configValue = useMemo(
     () => ({
       mode,
+      language,
+      isLoaded,
+      isImmersive,
       status: state.status,
       layout: state.layout,
       textData: state.textData,
-      language,
       isFocused: state.isFocused,
-      cursorStyle,
-      showSettings: state.showSettings,
       showOverlay: state.showOverlay,
-      isLoaded,
-      isImmersive,
     }),
     [
       mode,
+      language,
+      isLoaded,
+      isImmersive,
       state.status,
       state.layout,
       state.textData,
-      language,
       state.isFocused,
-      cursorStyle,
-      state.showSettings,
       state.showOverlay,
-      isLoaded,
-      isImmersive,
     ],
   )
 
@@ -358,10 +309,10 @@ export const EngineProvider = ({ children, data }: ProviderProps) => {
 
   const keystrokeValue = useMemo(
     () => ({
-      cursor: state.cursor,
-      extraOffset: state.extraOffset,
       keystrokes,
       lockedCursorRef,
+      cursor: state.cursor,
+      extraOffset: state.extraOffset,
     }),
     [state.cursor, state.extraOffset],
   )
@@ -375,14 +326,10 @@ export const EngineProvider = ({ children, data }: ProviderProps) => {
       resumeSession,
       getTimeElapsed,
       setStatus,
-      setTextMode,
-      setTextLanguage,
       setTextData,
       setFocused,
       updateLayout,
       setCursor,
-      setCursorStyle,
-      setShowSettings,
     }),
     [
       endSession,
@@ -392,14 +339,10 @@ export const EngineProvider = ({ children, data }: ProviderProps) => {
       resumeSession,
       getTimeElapsed,
       setStatus,
-      setTextMode,
-      setTextLanguage,
       setTextData,
       setFocused,
       updateLayout,
       setCursor,
-      setCursorStyle,
-      setShowSettings,
     ],
   )
 

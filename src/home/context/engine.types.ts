@@ -1,6 +1,5 @@
 import z from "zod"
 import { TextDoc } from "@/lib/types"
-import { TextSettings } from "./settings.types"
 
 export const schema = z.object({
   id: z.string().optional(),
@@ -45,7 +44,6 @@ export type EngineState = {
   timeLeft: number
   isFocused: boolean
   showOverlay: boolean
-  showSettings: boolean
   layout: {
     startIndex: number // starting index of the current word
     version: number // increments on layout changes to trigger Cursor rerender
@@ -57,12 +55,10 @@ export type EngineConfigCtxType = {
   mode: TextMode
   textData: TextDoc
   language: TextLanguage
-  cursorStyle: TextSettings["cursorStyle"]
   isLoaded: boolean
   isImmersive: boolean
   isFocused: boolean
   showOverlay: boolean
-  showSettings: boolean
   layout: {
     startIndex: number
     version: number
@@ -98,14 +94,10 @@ export type EngineActionsCtxType = {
   resumeSession: () => void
   getTimeElapsed: () => number
   setStatus: (s: EngineStatus) => void
-  setTextMode: (m: TextMode) => void
-  setTextLanguage: (lang: TextLanguage, shouldFocus?: boolean) => void
   setTextData: (textData: TextDoc, shouldFocus?: boolean) => void
   setFocused: (isFocused: boolean) => void
   updateLayout: (opts?: { shouldReset?: boolean; newStartIndex?: number }) => void
   setCursor: (cursor: number | ((prev: number) => number), extraOffset?: number) => void
-  setCursorStyle: (style: CursorStyle) => void
-  setShowSettings: (showSettings: boolean | ((prev: boolean) => boolean)) => void
 }
 
 export type EngineAction =
@@ -119,7 +111,6 @@ export type EngineAction =
   | { type: "SET_FOCUSED"; isFocused: boolean }
   | { type: "SET_SHOW_OVERLAY"; showOverlay: boolean }
   | { type: "SET_STATUS"; status: EngineStatus }
-  | { type: "SET_SHOW_SETTINGS"; showSettings: boolean | ((prev: boolean) => boolean) }
   | { type: "SET_METRICS"; wpm: number; accuracy: number }
   | {
       type: "SET_CURSOR"

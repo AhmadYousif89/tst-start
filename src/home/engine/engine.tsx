@@ -44,7 +44,7 @@ export const EngineContainer = () => {
       onBlur={handleBlur}
       onFocus={handleFocus}
       onMouseDown={handleMouseDown}
-      className="pb-10">
+      className="w-full pb-10">
       <TimeWarning />
       <div
         ref={containerRef}

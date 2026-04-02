@@ -31,7 +31,7 @@ export const TypingInput = ({
 
   const ctrlIsHeld = useKeyHold("Control")
 
-  const { status, textData, showSettings, isFocused } = configCtx
+  const { status, textData, isFocused } = configCtx
   const { cursor, extraOffset, keystrokes, lockedCursorRef } = keystrokeCtx
   const { endSession, startSession, resumeSession, getTimeElapsed, setCursor } =
     ActionsCtx
@@ -41,10 +41,10 @@ export const TypingInput = ({
   }, [])
 
   useEffect(() => {
-    if (isFocused && (status === "idle" || status === "paused") && !showSettings) {
+    if (isFocused && (status === "idle" || status === "paused")) {
       typingInputRef.current?.focus()
     }
-  }, [textData.text, status, showSettings, isFocused])
+  }, [textData.text, status, isFocused])
 
   const handleBeforeInput = (e: React.InputEvent<HTMLTextAreaElement>) => {
     const data = e.data

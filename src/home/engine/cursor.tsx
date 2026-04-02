@@ -5,6 +5,7 @@ import { isRtlLang } from "./utils"
 import { CursorStyle } from "../context/engine.types"
 import { useEngineConfig, useEngineKeystroke } from "../context/engine.context"
 import { useWindowResize } from "@/hooks/use-window-resize"
+import { useTextSettings } from "../context/settings.context"
 
 export type CursorProps = {
   containerRef: React.RefObject<HTMLDivElement | null>
@@ -35,14 +36,14 @@ export const Cursor = memo(
     const keystroke = useEngineKeystroke()
     const { width: windowWidth } = useWindowResize()
     const cursorIndicatorRef = useRef<HTMLDivElement>(null)
+    const { cursorStyle: currentCursorStyle } = useTextSettings()
 
     const { status, showOverlay, textData, layout, isFocused } = config
     const cursor = cursorProp ?? keystroke.cursor
     const extraOffset = extraOffsetProp ?? keystroke.extraOffset
-    const configCursorStyle = config.cursorStyle
 
     const isRTL = isRTLProp || isRtlLang(textData?.language)
-    const cursorStyle = cursorStyleProp ?? configCursorStyle ?? "pip"
+    const cursorStyle = cursorStyleProp ?? currentCursorStyle
     const isBoxy = cursorStyle === "box" || cursorStyle === "underline"
     const layoutVersion = layout.version
 

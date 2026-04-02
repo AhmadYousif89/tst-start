@@ -1,14 +1,16 @@
+import { cn } from "@/lib/utils"
 import {
   DropdownMenu,
-  DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuContent,
 } from "@/components/ui/dropdown-menu"
-import { useEngineConfig, useEngineActions } from "@/home/context/engine.context"
 import { Button } from "@/components/ui/button"
-import { cn } from "@/lib/utils"
-import { useHydrated } from "@tanstack/react-router"
 import { TextLanguage } from "../context/engine.types"
+import { useEngineConfig, useEngineActions } from "@/home/context/engine.context"
+import { getRandomText } from "@/server/data"
+import { useServerFn } from "@tanstack/react-start"
+import { useTextSettings } from "../context/settings.context"
 
 const LANGS: { label: string; value: TextLanguage }[] = [
   { label: "arabic", value: "ar" },
@@ -19,11 +21,28 @@ const LANGS: { label: string; value: TextLanguage }[] = [
 ]
 
 export const LanguageMenu = () => {
-  const { isImmersive, language } = useEngineConfig()
-  const { setTextLanguage } = useEngineActions()
-  const hydrated = useHydrated()
+  const { textData, isImmersive, language } = useEngineConfig()
+  const { setTextData } = useEngineActions()
+  const { setLanguage } = useTextSettings()
 
+  const getRandomTextFn = useServerFn(getRandomText)
+  const id = textData._id.toString()
   const currentLang = LANGS.find((l) => l.value === language) || LANGS[1]
+
+  const handleLanguage = async (lang: TextLanguage) => {
+    try {
+      const newTextData = await getRandomTextFn({
+        data: { id, language: lang },
+      })
+      if (newTextData) {
+        setTextData(newTextData)
+      }
+    } catch (error) {
+      console.error("Error fetching text data:", error)
+    } finally {
+      setLanguage(lang)
+    }
+  }
 
   return (
     <div
@@ -34,12 +53,8 @@ export const LanguageMenu = () => {
           <Button
             variant="ghost"
             className="text-muted-foreground grid grid-cols-[20px_1fr] font-mono hover:bg-transparent! hover:text-blue-600 focus-visible:ring-offset-2 dark:hover:text-blue-400">
-            {hydrated && (
-              <>
-                <GlobeIcon />
-                <span>{currentLang.label}</span>
-              </>
-            )}
+            <GlobeIcon />
+            <span>{currentLang.label}</span>
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent
@@ -48,9 +63,7 @@ export const LanguageMenu = () => {
           {LANGS.map((lang) => (
             <DropdownMenuItem
               key={lang.value}
-              onSelect={() => {
-                setTextLanguage(lang.value)
-              }}
+              onSelect={() => handleLanguage(lang.value)}
               className={cn(
                 "text-muted-foreground py-2 font-mono",
                 language === lang.value && "text-blue-600! dark:text-blue-400!",
