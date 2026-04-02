@@ -3,7 +3,7 @@ import { useRef, useMemo } from "react"
 import { Words } from "./words"
 import { Cursor } from "./cursor"
 import { EngineOverlay } from "./overlay"
-import { TypingInput } from "./typing-input"
+import { TypingInput } from "./textarea"
 import { TimeWarning } from "../main/timer-warning"
 
 import { useMouseShake } from "@/hooks/use-mouse-shake"

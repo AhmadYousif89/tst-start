@@ -12,7 +12,7 @@ import {
 } from "@/components/responsive-tooltip"
 import { Button } from "@/components/ui/button"
 import { HeatmapIcon } from "./icons/heatmap.icons"
-import { isRtlLang } from "../engine/engine-utils"
+import { isRtlLang } from "../engine/utils"
 
 const HEATMAP_COLORS = [
   "var(--red-500)", // Very Slow

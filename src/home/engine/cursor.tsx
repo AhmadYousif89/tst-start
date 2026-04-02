@@ -1,7 +1,7 @@
 import { useLayoutEffect, memo, useRef } from "react"
 
 import { cn } from "@/lib/utils"
-import { isRtlLang } from "./engine-utils"
+import { isRtlLang } from "./utils"
 import { CursorStyle } from "../context/engine.types"
 import { useEngineConfig, useEngineKeystroke } from "../context/engine.context"
 import { useWindowResize } from "@/hooks/use-window-resize"

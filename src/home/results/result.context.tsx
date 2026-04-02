@@ -18,7 +18,7 @@ import {
 } from "@/home/context/engine.context"
 import { submitSession } from "@/server/user"
 import { TopLoader } from "@/components/top-loader"
-import { calculateRawWpm, calculateConsistency } from "@/home/engine/engine-logic"
+import { calculateRawWpm, calculateConsistency } from "@/home/engine/logic"
 import {
   Keystroke,
   TextCategory,

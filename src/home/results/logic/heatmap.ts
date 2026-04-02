@@ -1,4 +1,4 @@
-import { getWordRanges } from "@/home/engine/engine-logic"
+import { getWordRanges } from "@/home/engine/logic"
 import { Keystroke } from "@/home/context/engine.types"
 
 export type WordStats = {

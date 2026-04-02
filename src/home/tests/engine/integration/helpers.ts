@@ -6,8 +6,8 @@ import {
   calculateWpm,
   getCharStates,
   getWordStart,
-} from "../../../engine/engine-logic"
-import { Keystroke } from "../../../context/engine.types"
+} from "@/home/engine/logic"
+import { Keystroke } from "@/home/context/engine.types"
 
 /**
  * Simulates typing a sequence of characters and returns the resulting keystrokes,

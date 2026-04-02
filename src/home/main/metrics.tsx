@@ -1,4 +1,4 @@
-import { formatTime } from "../engine/engine-utils"
+import { formatTime } from "../engine/utils"
 import { useEngineConfig, useEngineMetrics } from "../context/engine.context"
 
 export const Metrics = () => {

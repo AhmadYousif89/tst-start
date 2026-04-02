@@ -11,9 +11,9 @@ import { PauseIcon, PlayIcon } from "./icons/replay.icons"
 import { Word } from "@/home/engine/word"
 import { Cursor } from "@/home/engine/cursor"
 import { wordsGroup } from "@/home/engine/words"
-import { isRtlLang } from "@/home/engine/engine-utils"
+import { isRtlLang } from "@/home/engine/utils"
 import { useSound } from "@/home/context/sound.context"
-import { calculateWpm, getCharStates } from "@/home/engine/engine-logic"
+import { calculateWpm, getCharStates } from "@/home/engine/logic"
 
 export const ReplaySection = () => {
   const { playSound } = useSound()

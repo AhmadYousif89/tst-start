@@ -1,20 +1,15 @@
 import { useEffect } from "react"
+import { useKeyHold } from "@tanstack/react-hotkeys"
 
 import { cn } from "@/lib/utils"
-import {
-  getCharStates,
-  getWordStart,
-  isWordPerfect,
-  calculateNextCursor,
-} from "./engine-logic"
-import { isRtlLang } from "./engine-utils"
-import { useSound } from "../context/sound.context"
+import { isRtlLang } from "./utils"
+import { getCharStates, getWordStart, isWordPerfect, calculateNextCursor } from "./logic"
 import {
   useEngineActions,
   useEngineConfig,
   useEngineKeystroke,
 } from "../context/engine.context"
-import { useKeyHold } from "@tanstack/react-hotkeys"
+import { useSound } from "../context/sound.context"
 
 const SIDE_BUFFER = 40
 

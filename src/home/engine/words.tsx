@@ -1,15 +1,14 @@
 import { memo, useMemo, useEffect, useRef, useCallback } from "react"
 
 import { cn } from "@/lib/utils"
-import { Word } from "./word"
-import { isRtlLang } from "./engine-utils"
-import { getCharStates } from "./engine-logic"
 import {
   useEngineKeystroke,
   useEngineConfig,
   useEngineActions,
 } from "../context/engine.context"
-import { calculateLayoutShift } from "./layout-logic"
+import { Word } from "./word"
+import { isRtlLang } from "./utils"
+import { getCharStates, calculateLayoutShift } from "./logic"
 
 // Group characters into words (prevents mid-word line breaks)
 export const wordsGroup = (characters: string[]) => {
