@@ -1,9 +1,6 @@
-import { useState, useRef } from "react"
+import { useState, useRef, Fragment } from "react"
 import { Volume2Icon, VolumeOffIcon } from "lucide-react"
 
-import { cn } from "@/lib/utils"
-import { SoundNames } from "@/home/context/sound.types"
-import { useClickOutside } from "@/hooks/use-click-outside"
 import {
   Select,
   SelectContent,
@@ -16,15 +13,28 @@ import {
 import { Toggle } from "@/components/ui/toggle"
 import { Button } from "@/components/ui/button"
 import { useSound } from "@/home/context/sound.context"
+import { SoundNames } from "@/home/context/sound.types"
+import { useClickOutside } from "@/hooks/use-click-outside"
 
-export const SoundSettings = () => {
+const soundOptions: { value: SoundNames; label: string }[] = [
+  { value: "click", label: "Click" },
+  { value: "beep", label: "Beep" },
+  { value: "creamy", label: "Creamy" },
+  { value: "hitmarker", label: "Hitmarker" },
+  { value: "osu", label: "Osu" },
+  { value: "pop", label: "Pop" },
+  { value: "punch", label: "Punch" },
+  { value: "rubber", label: "Rubber" },
+  { value: "typewriter", label: "Typewriter" },
+]
+
+export const AudioControls = () => {
   const sliderRef = useRef<HTMLDivElement>(null)
   const [showVolumeSlider, setShowVolumeSlider] = useState(false)
 
   const { soundName, volume, isMuted, playSound, setSoundName, setVolume, setIsMuted } =
     useSound()
 
-  // Close slider when clicking outside
   useClickOutside(sliderRef, () => setShowVolumeSlider(false), showVolumeSlider)
 
   const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -38,20 +48,13 @@ export const SoundSettings = () => {
   }
 
   return (
-    <div className="flex items-center gap-4">
-      <span className="text-muted-foreground text-6 md:text-5">Sound</span>
+    <div className="text-6 flex items-center gap-4">
+      <span className="text-muted-foreground">Sound</span>
       <div className="flex items-center gap-2">
         <Select
-          // open
           value={soundName}
           onValueChange={(val) => setSoundName(val as SoundNames)}>
-          <SelectTrigger
-            className={cn(
-              "text-6 md:text-5 min-w-30.5",
-              soundName === "none" ?
-                "bg-input/50 hover:bg-input/70"
-              : "bg-blue-400 dark:bg-blue-600",
-            )}>
+          <SelectTrigger className="min-w-30.5 bg-blue-400 text-[white] *:text-[white] dark:bg-blue-600">
             <SelectValue placeholder="Sound" />
           </SelectTrigger>
           <SelectContent
@@ -59,25 +62,16 @@ export const SoundSettings = () => {
             position="popper"
             className="duration-300 ease-out">
             <SelectGroup>
-              <SelectItem value="none">None</SelectItem>
-              <SelectSeparator className="bg-border my-1 h-px w-full" />
-              <SelectItem value="click">Click</SelectItem>
-              <SelectSeparator className="bg-border my-1 h-px w-full" />
-              <SelectItem value="beep">Beep</SelectItem>
-              <SelectSeparator className="bg-border my-1 h-px w-full" />
-              <SelectItem value="creamy">Creamy</SelectItem>
-              <SelectSeparator className="bg-border my-1 h-px w-full" />
-              <SelectItem value="hitmarker">Hitmarker</SelectItem>
-              <SelectSeparator className="bg-border my-1 h-px w-full" />
-              <SelectItem value="osu">Osu</SelectItem>
-              <SelectSeparator className="bg-border my-1 h-px w-full" />
-              <SelectItem value="pop">Pop</SelectItem>
-              <SelectSeparator className="bg-border my-1 h-px w-full" />
-              <SelectItem value="punch">Punch</SelectItem>
-              <SelectSeparator className="bg-border my-1 h-px w-full" />
-              <SelectItem value="rubber">Rubber</SelectItem>
-              <SelectSeparator className="bg-border my-1 h-px w-full" />
-              <SelectItem value="typewriter">Typewriter</SelectItem>
+              {soundOptions.map(({ value, label }) => (
+                <Fragment key={value}>
+                  <SelectItem
+                    value={value}
+                    className="data-[state=on]:bg-blue-400 data-[state=on]:text-white dark:data-[state=on]:bg-blue-600 dark:data-[state=on]:text-white">
+                    {label}
+                  </SelectItem>
+                  <SelectSeparator className="bg-border my-1 h-px w-full last:hidden" />
+                </Fragment>
+              ))}
             </SelectGroup>
           </SelectContent>
         </Select>
@@ -90,7 +84,7 @@ export const SoundSettings = () => {
             aria-label="Volume settings"
             pressed={showVolumeSlider || isMuted}
             onPressedChange={() => setShowVolumeSlider(!showVolumeSlider)}
-            className="text-muted-foreground dark:aria-pressed:text-foreground size-8">
+            className="bg-accent dark:bg-input size-8 border-0 text-[white]! hover:bg-blue-400 dark:hover:bg-blue-600 dark:hover:text-[white]">
             {isMuted || volume === 0 ?
               <VolumeOffIcon />
             : <Volume2Icon />}
@@ -122,10 +116,11 @@ export const SoundSettings = () => {
 
         <Button
           size="sm"
+          variant="ghost"
+          disabled={isMuted}
           onClick={() => playSound()}
-          className="hover:text-muted-foreground text-background dark:text-foreground dark:bg-muted bg-muted-foreground/60 border-0 hover:bg-blue-400 focus-visible:ring-offset-2 dark:hover:bg-blue-600"
-          disabled={soundName === "none" || isMuted}>
-          <span className="text-6 md:text-5">Play</span>
+          className="bg-accent dark:bg-input focus-visible:ring-ring! border-0 text-[white] hover:bg-blue-400 hover:text-[white] focus-visible:ring-offset-2 dark:hover:bg-blue-600 dark:hover:text-[white]">
+          <span className="text-6">Play</span>
         </Button>
       </div>
     </div>

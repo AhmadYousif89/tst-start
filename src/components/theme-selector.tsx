@@ -1,33 +1,49 @@
 import { useTheme } from "next-themes"
+import { PaletteIcon } from "lucide-react"
 
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+
+const themes = [
+  { value: "light", label: "Light" },
+  { value: "dark", label: "Dark" },
+]
 
 export const ThemeSelector = () => {
   const { resolvedTheme, setTheme } = useTheme()
 
   return (
-    <div className="flex items-center gap-4">
-      <span className="text-muted-foreground text-6 md:text-5">Theme</span>
-      <ToggleGroup
-        spacing={2}
-        type="single"
-        variant="outline"
-        className="text-6 md:text-5"
+    <div className="text-muted-foreground/50 flex items-center">
+      <Select
         value={resolvedTheme}
-        onValueChange={(val) => {
-          if (val) setTheme(val)
-        }}>
-        <ToggleGroupItem
-          value="dark"
-          aria-label="Dark">
-          Dark
-        </ToggleGroupItem>
-        <ToggleGroupItem
-          value="light"
-          aria-label="Light">
-          Light
-        </ToggleGroupItem>
-      </ToggleGroup>
+        onValueChange={setTheme}>
+        <SelectTrigger
+          data-icon="hide"
+          className="text-6 hover:text-muted-foreground focus-visible:text-muted-foreground px-2 py-0">
+          <PaletteIcon className="size-4" />
+          <SelectValue placeholder="System" />
+        </SelectTrigger>
+        <SelectContent
+          side="top"
+          position="popper"
+          data-icon="hide"
+          data-indicator="hide"
+          className="p-1 *:space-y-1">
+          {themes.map((theme) => (
+            <SelectItem
+              key={theme.value}
+              value={theme.value}
+              className="text-input dark:focus:bg-input focus:bg-accent/50 focus:text-foreground dark:focus:text-foreground data-checked:bg-accent data-checked:text-foreground! border-0 px-2 py-1.5">
+              {theme.label}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
     </div>
   )
 }
