@@ -6,22 +6,16 @@ import { EngineOverlay } from "./overlay"
 import { TypingInput } from "./textarea"
 import { TimeWarning } from "../main/timer-warning"
 
-import { useMouseShake } from "@/hooks/use-mouse-shake"
 import { useEngineActions, useEngineConfig } from "../context/engine.context"
 
 export const EngineContainer = () => {
-  const { setFocused, setStatus } = useEngineActions()
-  const { textData, status, isImmersive } = useEngineConfig()
+  const { setFocused } = useEngineActions()
+  const { textData, status } = useEngineConfig()
 
   const containerRef = useRef<HTMLDivElement>(null)
   const typingInputRef = useRef<HTMLTextAreaElement>(null)
 
   const characters = useMemo(() => textData.text.split("") || [], [textData.text])
-
-  useMouseShake({
-    enabled: isImmersive,
-    onShake: () => setStatus("paused"),
-  })
 
   const handleMouseDown = (e: React.MouseEvent) => {
     if (status === "finished") return

@@ -2,12 +2,12 @@ import { useEffect, useRef } from "react"
 
 type MouseShakeOptions = {
   enabled: boolean
+  windowMs?: number
+  threshold?: number
+  minEvents?: number
+  cooldownMs?: number
+  peakThreshold?: number
   onShake: () => void
-  windowMs?: number // how much time to consider for shake
-  threshold?: number // how much movement to consider for shake
-  minEvents?: number // how many events to consider for shake
-  peakThreshold?: number // how much movement to consider for shake
-  cooldownMs?: number // how much time to wait after shake
 }
 type Sample = { t: number; d: number }
 type Pos = { x: number; y: number; t: number }

@@ -2,17 +2,12 @@ import React, {
   createContext,
   useCallback,
   useReducer,
-  useEffect,
   useMemo,
   useRef,
   useContext,
 } from "react"
-import { useHotkey } from "@tanstack/react-hotkeys"
-import { useServerFn } from "@tanstack/react-start"
-import { useQuery } from "@tanstack/react-query"
 
 import { TextDoc } from "@/lib/types"
-import { getRandomText } from "@/server/data"
 import { submitSession } from "@/server/user"
 import {
   Keystroke,
@@ -24,10 +19,17 @@ import {
   EngineKeystrokeCtxType,
   ResetOptions,
 } from "./engine.types"
-import { isLanguageSynced, isSessionInvalid } from "../engine/utils"
 import { useTextSettings } from "./settings.context"
 import { engineReducer, initialState } from "./engine.reducer"
+import { isSessionInvalid } from "../engine/utils"
 import { calculateWpm, calculateAccuracy, getInitialTime } from "../engine/logic"
+import { useShortcutKeys } from "@/home/hooks/use-shortcut-keys"
+
+import { useSyncLanguage } from "../hooks/use-sync-language"
+import { useMetricsTick } from "../hooks/use-metrics-tick"
+import { useEngineExperience } from "../hooks/use-engine-experience"
+import { useMouseShake } from "../hooks/use-mouse-shake"
+import { useHotkey } from "@tanstack/react-hotkeys"
 
 const EngineConfigCtx = createContext<EngineConfigCtxType | undefined>(undefined)
 
@@ -51,15 +53,27 @@ export const EngineProvider = ({ children, data }: ProviderProps) => {
     timeLeft: getInitialTime(mode),
   })
 
+  /* -------------------- REFS & HOOKS -------------------- */
+
   const lockedCursorRef = useRef(0)
   const accumulatedTimeRef = useRef(0)
-  const statusRef = useRef(state.status)
-  const hasUpdatedStatsRef = useRef(false)
   const keystrokes = useRef<Keystroke[]>([])
   const timerRef = useRef<number | null>(null)
   const sessionStartTimeRef = useRef<number | null>(null)
-  const overlayTimerRef = useRef<NodeJS.Timeout | null>(null)
   const sessionMetaPromiseRef = useRef<Promise<SessionMeta> | null>(null)
+
+  const isImmersive = state.status === "typing"
+
+  useEngineExperience({
+    dispatch,
+    status: state.status,
+    isFocused: state.isFocused,
+  })
+
+  useMouseShake({
+    enabled: isImmersive,
+    onShake: () => dispatch({ type: "PAUSE", timestamp: Date.now() }),
+  })
 
   useHotkey(
     "Mod+R",
@@ -70,66 +84,21 @@ export const EngineProvider = ({ children, data }: ProviderProps) => {
     { requireReset: true },
   )
 
-  const getRandomTextFn = useServerFn(getRandomText)
-
-  const id = state.textData._id.toString()
-
-  // Fetch new text when language changes
-  useQuery({
-    queryKey: ["random-text", language],
-    queryFn: async () => {
-      const text = await getRandomTextFn({
-        data: { id, language },
-      })
-      if (text) {
-        setTextData(text)
-        return text
-      }
-      return data
-    },
-    enabled: () => isLoaded && !isLanguageSynced(language, state.textData),
+  useShortcutKeys({
+    status: state.status,
+    isFocused: state.isFocused,
+    setFocused: (v) => dispatch({ type: "SET_FOCUSED", isFocused: v }),
   })
 
-  const isImmersive = state.status === "typing"
-
-  // Hide mouse cursor during immersion mode
-  useEffect(() => {
-    document.documentElement.classList.toggle("cursor-none", isImmersive)
-    return () => {
-      document.documentElement.classList.remove("cursor-none")
-    }
-  }, [isImmersive])
-
-  // Guard against race conditions and stale state
-  useEffect(() => {
-    statusRef.current = state.status
-  }, [state.status])
-
-  // Set initial status to idle once text is loaded and language is synced
-  useEffect(() => {
-    if (isLoaded && state.status === "loading") {
-      const isSynced = isLanguageSynced(language, state.textData)
-      if (isSynced) {
-        dispatch({ type: "SET_STATUS", status: "idle" })
-      }
-    }
-  }, [isLoaded, language, state.textData.language, state.textData.category, state.status])
-
-  // Pause session after a short delay when focus is lost during typing
-  useEffect(() => {
-    if (overlayTimerRef.current) clearTimeout(overlayTimerRef.current)
-
-    if (!state.isFocused && state.status === "typing") {
-      overlayTimerRef.current = setTimeout(() => {
-        if (statusRef.current === "typing")
-          dispatch({ type: "PAUSE", timestamp: Date.now() })
-      }, 500)
-    }
-
-    return () => {
-      if (overlayTimerRef.current) clearTimeout(overlayTimerRef.current)
-    }
-  }, [state.isFocused, state.status])
+  useSyncLanguage({
+    id: state.textData._id.toString(),
+    isLoaded,
+    language,
+    status: state.status,
+    currentText: state.textData,
+    setStatus: (s) => dispatch({ type: "SET_STATUS", status: s }),
+    setTextData: (newData) => dispatch({ type: "SET_TEXT", textData: newData }),
+  })
 
   /* -------------------- ACTIONS -------------------- */
 
@@ -163,26 +132,25 @@ export const EngineProvider = ({ children, data }: ProviderProps) => {
     timerRef.current = now
     sessionStartTimeRef.current = now
     accumulatedTimeRef.current = 0
-    hasUpdatedStatsRef.current = false
   }, [])
 
   const pauseSession = useCallback(() => {
-    if (statusRef.current !== "typing") return
+    if (state.status !== "typing") return
     dispatch({ type: "PAUSE", timestamp: Date.now() })
     if (timerRef.current) {
       accumulatedTimeRef.current += Date.now() - timerRef.current
       timerRef.current = null
     }
-  }, [])
+  }, [state.status])
 
   const resumeSession = useCallback(() => {
-    if (statusRef.current !== "paused") return
+    if (state.status !== "paused") return
     dispatch({ type: "RESUME", timestamp: Date.now() })
     timerRef.current = Date.now()
-  }, [])
+  }, [state.status])
 
   const endSession = useCallback(() => {
-    if (statusRef.current !== "typing" && statusRef.current !== "paused") return
+    if (state.status !== "typing" && state.status !== "paused") return
 
     const elapsed = getTimeElapsed()
     timerRef.current = null
@@ -210,7 +178,7 @@ export const EngineProvider = ({ children, data }: ProviderProps) => {
       wpm: finalWpm,
       accuracy: finalAccuracy,
     })
-  }, [getTimeElapsed])
+  }, [getTimeElapsed, state.status])
 
   const setTextData = useCallback(
     (newData: TextDoc, shouldFocus: boolean = true) => {
@@ -249,40 +217,14 @@ export const EngineProvider = ({ children, data }: ProviderProps) => {
 
   /* -------------------- EFFECTS -------------------- */
 
-  // Update metrics every second
-  const intervalRef = useRef<NodeJS.Timeout>(undefined)
-  useEffect(() => {
-    if (intervalRef.current || state.status !== "typing") return
-
-    intervalRef.current = setInterval(() => {
-      const elapsed = getTimeElapsed()
-      const ks = keystrokes.current
-      const correctKeys = ks.filter((k) => k.isCorrect).length
-      const totalTyped = ks.filter((k) => k.typedChar !== "Backspace").length
-
-      const isTimed = mode !== "passage"
-      const limit = getInitialTime(mode) * 1000
-
-      if (isTimed && elapsed >= limit) {
-        endSession()
-        return
-      }
-
-      dispatch({
-        type: "TICK",
-        isTimed,
-        wpm: calculateWpm(correctKeys, elapsed),
-        accuracy: calculateAccuracy(correctKeys, totalTyped),
-      })
-    }, 1000)
-
-    return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current)
-        intervalRef.current = undefined
-      }
-    }
-  }, [state.status, mode, getTimeElapsed, endSession])
+  useMetricsTick({
+    mode,
+    status: state.status,
+    keystrokesRef: keystrokes,
+    dispatch,
+    endSession,
+    getTimeElapsed,
+  })
 
   /* -------------------- PROVIDER VALUES -------------------- */
 
