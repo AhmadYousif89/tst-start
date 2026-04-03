@@ -67,14 +67,8 @@ function ToggleGroupItem({
       data-size={context.size || size}
       data-spacing={context.spacing}
       className={cn(
-        "shrink-0 cursor-pointer hover:border-blue-600 hover:bg-transparent hover:text-blue-600",
-
+        "shrink-0 cursor-pointer hover:border-blue-600 hover:bg-transparent",
         "group-data-[spacing=0]/toggle-group:rounded-none group-data-[spacing=0]/toggle-group:px-2 group-data-horizontal/toggle-group:data-[spacing=0]:first:rounded-l-lg group-data-vertical/toggle-group:data-[spacing=0]:first:rounded-t-lg group-data-horizontal/toggle-group:data-[spacing=0]:last:rounded-r-lg group-data-vertical/toggle-group:data-[spacing=0]:last:rounded-b-lg group-data-horizontal/toggle-group:data-[spacing=0]:data-[variant=outline]:border-l-0 group-data-vertical/toggle-group:data-[spacing=0]:data-[variant=outline]:border-t-0 group-data-horizontal/toggle-group:data-[spacing=0]:data-[variant=outline]:first:border-l group-data-vertical/toggle-group:data-[spacing=0]:data-[variant=outline]:first:border-t",
-
-        "data-[state=on]:border-transparent data-[state=on]:bg-blue-400 data-[state=on]:text-[white]",
-        "dark:hover:border-blue-400 dark:hover:text-blue-400 dark:data-[state=on]:bg-blue-600 dark:data-[state=on]:text-[white]",
-
-        "focus-visible:ring-offset-background focus:z-10 focus-visible:z-10 focus-visible:ring-2 focus-visible:ring-offset-2",
         toggleVariants({
           variant: context.variant || variant,
           size: context.size || size,

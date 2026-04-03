@@ -24,7 +24,7 @@ const toggleVariants = cva(
       variant: {
         default: "bg-transparent",
         outline:
-          "border text-muted-foreground hover:border-blue-600 hover:text-blue-600 bg-transparent shadow-xs dark:hover:text-blue-400 dark:hover:border-blue-400",
+          "border text-muted-foreground hover:border-blue-600 hover:text-blue-600 bg-transparent shadow-xs dark:hover:text-blue-400 dark:hover:border-blue-400 data-[state=on]:hover:border-transparent!",
       },
       size: {
         default: "h-8 min-w-8 px-2",
