@@ -37,3 +37,22 @@ export const isLanguageSynced = (
   const current = getLangCat(currentText.language, currentText.category)
   return selected.lang === current.lang && selected.cat === current.cat
 }
+
+const MIN_WPM = 10
+const MIN_ACCURACY = 20
+const MIN_KEYSTROKES = 5
+const MIN_DURATION_MS = 2000
+
+export function isSessionInvalid(
+  wpm: number,
+  accuracy: number,
+  durationMs: number,
+  keystrokeCount: number,
+): boolean {
+  return (
+    wpm < MIN_WPM ||
+    accuracy < MIN_ACCURACY ||
+    durationMs < MIN_DURATION_MS ||
+    keystrokeCount < MIN_KEYSTROKES
+  )
+}

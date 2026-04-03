@@ -1,11 +1,14 @@
-import { Header } from "@/components/header"
-import { MainContent } from "./main/content"
-import { Footer } from "@/components/footer"
-import { Results } from "./results/results"
+import { Suspense } from "react"
 
+import { Header } from "@/components/header"
+import { Footer } from "@/components/footer"
+import { Spinner } from "@/components/spinner"
+import { LoadingScreen } from "@/components/loading-screen"
+
+import { Results } from "./results/results"
+import { MainContent } from "./main/content"
 import { ResultProvider } from "./results/result.context"
 import { useEngineConfig } from "./context/engine.context"
-import { LoadingScreen } from "@/components/loading-screen"
 import { useIncrementalProgress } from "@/hooks/use-incremental-progress"
 
 export const Home = () => {
@@ -26,9 +29,11 @@ export const Home = () => {
       <Header />
       {status !== "finished" ?
         <MainContent />
-      : <ResultProvider>
-          <Results />
-        </ResultProvider>
+      : <Suspense fallback={<Spinner />}>
+          <ResultProvider>
+            <Results />
+          </ResultProvider>
+        </Suspense>
       }
       <Footer />
     </div>

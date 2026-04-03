@@ -79,6 +79,11 @@ export type EngineKeystrokeCtxType = {
   lockedCursorRef: React.RefObject<number>
 }
 
+export type SessionMeta = {
+  isFirst: boolean
+  isBest: boolean
+}
+
 export type ResetOptions = {
   status?: EngineStatus
   actionName?: string
@@ -94,10 +99,11 @@ export type EngineActionsCtxType = {
   resumeSession: () => void
   getTimeElapsed: () => number
   setStatus: (s: EngineStatus) => void
-  setTextData: (textData: TextDoc, shouldFocus?: boolean) => void
   setFocused: (isFocused: boolean) => void
+  setTextData: (textData: TextDoc, shouldFocus?: boolean) => void
   updateLayout: (opts?: { shouldReset?: boolean; newStartIndex?: number }) => void
   setCursor: (cursor: number | ((prev: number) => number), extraOffset?: number) => void
+  sessionMetaPromiseRef: React.RefObject<Promise<SessionMeta> | null>
 }
 
 export type EngineAction =

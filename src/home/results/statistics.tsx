@@ -7,19 +7,9 @@ export const SessionStatistics = () => {
   const { resultData } = useResult()
 
   const stats = useMemo(() => {
-    const raw =
-      resultData.keystrokes.length > 0 ?
-        calculateRawWpm(resultData.keystrokes.length, resultData.durationMs)
-      : resultData.rawWpm || 0
-
-    const consistency =
-      resultData.keystrokes.length > 0 ?
-        calculateConsistency(resultData.keystrokes, resultData.durationMs)
-      : resultData.consistency || 0
-
     return {
-      raw,
-      consistency,
+      raw: calculateRawWpm(resultData.keystrokes.length, resultData.durationMs),
+      consistency: calculateConsistency(resultData.keystrokes, resultData.durationMs),
       testType: {
         mode: getModeLabel(resultData.mode),
         cat: resultData.category,

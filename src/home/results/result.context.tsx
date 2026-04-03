@@ -16,15 +16,15 @@ import {
   useEngineKeystroke,
   useEngineActions,
 } from "@/home/context/engine.context"
-import { submitSession } from "@/server/user"
 import { TopLoader } from "@/components/top-loader"
-import { calculateRawWpm, calculateConsistency } from "@/home/engine/logic"
 import {
   Keystroke,
+  SessionMeta,
   TextCategory,
   TextLanguage,
   TextMode,
 } from "@/home/context/engine.types"
+import { isSessionInvalid } from "../engine/utils"
 
 export type ResultData = {
   text: string
@@ -34,12 +34,10 @@ export type ResultData = {
   keystrokes: Keystroke[]
 
   wpm: number
-  rawWpm: number
   accuracy: number
   charCount: number
   errorCount: number
   durationMs: number
-  consistency: number
 
   isFirst: boolean
   isBest: boolean
@@ -55,27 +53,6 @@ type ResultContextType = {
   setIsScreenshotting: (value: boolean) => void
 }
 
-/* -------------------- VALIDATION -------------------- */
-
-const MIN_WPM = 10
-const MIN_ACCURACY = 20
-const MIN_KEYSTROKES = 5
-const MIN_DURATION_MS = 2000
-
-function isSessionInvalid(
-  wpm: number,
-  accuracy: number,
-  durationMs: number,
-  keystrokeCount: number,
-): boolean {
-  return (
-    wpm < MIN_WPM ||
-    accuracy < MIN_ACCURACY ||
-    durationMs < MIN_DURATION_MS ||
-    keystrokeCount < MIN_KEYSTROKES
-  )
-}
-
 /* -------------------- CONTEXT -------------------- */
 
 const ResultContext = createContext<ResultContextType | undefined>(undefined)
@@ -83,62 +60,48 @@ const ResultContext = createContext<ResultContextType | undefined>(undefined)
 export const ResultProvider = ({ children }: { children: ReactNode }) => {
   const { wpm, accuracy } = useEngineMetrics()
   const { textData, mode } = useEngineConfig()
-  const { getTimeElapsed } = useEngineActions()
+  const { getTimeElapsed, sessionMetaPromiseRef } = useEngineActions()
   const { keystrokes: keystrokesRef } = useEngineKeystroke()
+
+  const sessionMeta: SessionMeta =
+    sessionMetaPromiseRef.current ?
+      use(sessionMetaPromiseRef.current)
+    : { isFirst: false, isBest: false }
 
   const [loadingProgress, setLoadingProgress] = useState(0)
   const [isScreenshotting, setIsScreenshotting] = useState(false)
-  const [sessionMeta, setSessionMeta] = useState({ isFirst: false, isBest: false })
 
   const resultData = useMemo<ResultData>(() => {
     const ks = keystrokesRef.current ?? []
     const durationMs = getTimeElapsed()
-    const text = textData?.text ?? ""
-    const language = textData?.language ?? "en"
-    const category = textData?.category ?? "general"
-
     const totalTyped = ks.filter((k) => k.typedChar !== "Backspace").length
     const correctKeys = ks.filter((k) => k.isCorrect).length
-    const errorCount = totalTyped - correctKeys
-
-    const rawWpm = calculateRawWpm(ks.length, durationMs)
-    const consistency = calculateConsistency(ks, durationMs)
-    const isInvalid = isSessionInvalid(wpm, accuracy, durationMs, ks.length)
 
     return {
       wpm,
-      accuracy,
-      charCount: totalTyped,
-      errorCount,
-      durationMs,
-      rawWpm,
-      consistency,
       mode,
-      category,
-      isInvalid,
+      accuracy,
+      durationMs,
       keystrokes: ks,
-      text,
-      language,
+      charCount: totalTyped,
+      errorCount: totalTyped - correctKeys,
+      isInvalid: isSessionInvalid(wpm, accuracy, durationMs, ks.length),
+      text: textData.text,
+      category: textData.category,
+      language: textData.language,
       isFirst: sessionMeta.isFirst,
       isBest: sessionMeta.isBest,
     }
   }, [wpm, accuracy, textData, mode, keystrokesRef, getTimeElapsed, sessionMeta])
 
+  // Invalidate the anon-user query once so the header PB updates
   const queryClient = useQueryClient()
-  const hasSubmittedRef = useRef(false)
-  // Update anon_user with session data
+  const hasInvalidatedRef = useRef(false)
   useEffect(() => {
-    if (hasSubmittedRef.current) return
-    hasSubmittedRef.current = true
-
-    submitSession({ data: { wpm, accuracy, isInvalid: resultData.isInvalid } })
-      .then((result) => {
-        setSessionMeta(result)
-        // Invalidate the query so the header PB updates immediately
-        queryClient.invalidateQueries({ queryKey: ["anon-user"] })
-      })
-      .catch(console.error)
-  }, [queryClient, resultData.isInvalid, wpm, accuracy])
+    if (hasInvalidatedRef.current || resultData.isInvalid) return
+    hasInvalidatedRef.current = true
+    queryClient.invalidateQueries({ queryKey: ["anon-user"] })
+  }, [queryClient, resultData.isInvalid])
 
   return (
     <ResultContext.Provider
@@ -172,3 +135,4 @@ export const useResult = () => {
   }
   return ctx
 }
+

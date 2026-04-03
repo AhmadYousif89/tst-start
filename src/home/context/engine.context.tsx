@@ -13,8 +13,10 @@ import { useQuery } from "@tanstack/react-query"
 
 import { TextDoc } from "@/lib/types"
 import { getRandomText } from "@/server/data"
+import { submitSession } from "@/server/user"
 import {
   Keystroke,
+  SessionMeta,
   EngineStatus,
   EngineConfigCtxType,
   EngineMetricsCtxType,
@@ -22,7 +24,7 @@ import {
   EngineKeystrokeCtxType,
   ResetOptions,
 } from "./engine.types"
-import { isLanguageSynced } from "../engine/utils"
+import { isLanguageSynced, isSessionInvalid } from "../engine/utils"
 import { useTextSettings } from "./settings.context"
 import { engineReducer, initialState } from "./engine.reducer"
 import { calculateWpm, calculateAccuracy, getInitialTime } from "../engine/logic"
@@ -57,6 +59,7 @@ export const EngineProvider = ({ children, data }: ProviderProps) => {
   const timerRef = useRef<number | null>(null)
   const sessionStartTimeRef = useRef<number | null>(null)
   const overlayTimerRef = useRef<NodeJS.Timeout | null>(null)
+  const sessionMetaPromiseRef = useRef<Promise<SessionMeta> | null>(null)
 
   useHotkey(
     "Mod+R",
@@ -149,6 +152,7 @@ export const EngineProvider = ({ children, data }: ProviderProps) => {
       sessionStartTimeRef.current = null
       accumulatedTimeRef.current = 0
       lockedCursorRef.current = 0
+      sessionMetaPromiseRef.current = null
     },
     [mode],
   )
@@ -190,6 +194,15 @@ export const EngineProvider = ({ children, data }: ProviderProps) => {
 
     const finalWpm = calculateWpm(correctKeys, elapsed)
     const finalAccuracy = calculateAccuracy(correctKeys, totalTyped)
+
+    const isInvalid = isSessionInvalid(finalWpm, finalAccuracy, elapsed, ks.length)
+
+    sessionMetaPromiseRef.current =
+      isInvalid ?
+        Promise.resolve({ isFirst: false, isBest: false })
+      : submitSession({
+          data: { wpm: finalWpm, accuracy: finalAccuracy, isInvalid: false },
+        }).catch(() => ({ isFirst: false, isBest: false }))
 
     dispatch({
       type: "END",
@@ -327,6 +340,7 @@ export const EngineProvider = ({ children, data }: ProviderProps) => {
       resumeSession,
       getTimeElapsed,
       setStatus,
+      sessionMetaPromiseRef,
       setTextData,
       setFocused,
       updateLayout,

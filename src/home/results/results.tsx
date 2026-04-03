@@ -52,11 +52,7 @@ export const Results = () => {
     })
   }, [isNewRecord])
 
-  let tags = {
-    title: "",
-    subtitle: "",
-    caption: "",
-  }
+  let tags = { title: "\u00A0", subtitle: "\u00A0", caption: "\u00A0" }
 
   if (resultData.isInvalid) {
     tags = resultTags["invalid"]
@@ -69,7 +65,7 @@ export const Results = () => {
   }
 
   return (
-    <main className="animate-in fade-in grow py-4 duration-1000 md:py-6">
+    <main className="animate-in fade-in grow py-4 duration-500 md:py-6">
       <div
         id="result-screen"
         className={cn(
