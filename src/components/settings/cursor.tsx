@@ -20,7 +20,10 @@ export const CursorToggle = () => {
         type="single"
         variant="outline"
         value={cursorStyle}
-        onValueChange={(val) => setCursorStyle(val as CursorStyle)}>
+        onValueChange={(val) => {
+          if (!val) return // Prevent untoggling
+          setCursorStyle(val as CursorStyle)
+        }}>
         {cursorOptions.map(({ value, label }) => {
           const content =
             value === "pip" ?

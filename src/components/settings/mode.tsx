@@ -24,6 +24,7 @@ export const ModeToggle = () => {
         type="single"
         variant="outline"
         onValueChange={(val) => {
+          if (!val) return // Prevent untoggling
           setMode(val as TextMode)
           resetSession({ newMode: val as TextMode, status: "idle", shouldFocus: false })
         }}>

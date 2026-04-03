@@ -4,8 +4,6 @@ import {
   isSingleLetterKey,
   NUMBER_KEYS,
   NumberKey,
-  FUNCTION_KEYS,
-  FunctionKey,
 } from "@tanstack/react-hotkeys"
 
 import { EngineStatus } from "@/home/context/engine.types"
@@ -34,9 +32,10 @@ export const useShortcutKeys = ({ status, isFocused, setFocused }: ShortcutsProp
 
       const isTypableKey = isSingleLetterKey(e.key) || NUMBER_KEYS.has(e.key as NumberKey) // [a-z, A-Z, 0-9]
 
-      if (isTypableKey) setFocused(true)
-      // Prevent keypress from bubbling up to the textarea, except for [F1-F12] keys
-      if (!FUNCTION_KEYS.has(e.key as FunctionKey)) e.preventDefault()
+      if (isTypableKey) {
+        setFocused(true)
+        e.preventDefault()
+      }
     }
 
     window.addEventListener("keydown", handleGlobalKeyDown)
