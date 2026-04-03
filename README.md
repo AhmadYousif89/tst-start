@@ -1,12 +1,12 @@
 # Typing Speed Test ـــــــ TST
 
-A modern, responsive, and feature-rich typing speed test application similar to the likes of [MonkeyType](https://monkeytype.com/) application.
+A modern, responsive, and feature-rich typing speed test application similar to the likes of [MonkeyType](https://monkeytype.com/) application built with Tanstack framework.
 
 This project provides real-time feedback, detailed statistics, and a sleek user interface for improving typing skills.
 
-![Home](./public/screenshots/home.png)
-![Result completed](./public/screenshots/complete.png)
-![Result new record](./public/screenshots/new-record.png)
+![Home](./public/screenshots/main.png)
+![Immersive mode](./public/screenshots/immersive.png)
+![Result](./public/screenshots/results.png)
 
 ### Links
 
@@ -20,17 +20,17 @@ This project provides real-time feedback, detailed statistics, and a sleek user 
 - **Interactive Heatmap**: Visualize your typing performance across different sections of text.
 - **Dynamic Charting**: View your progress over time with interactive charts powered by Recharts.
 - **Customizable Themes**: Multiple themes to suit your preference, including dark and light modes with more to come.
-- **Versatile Text Library**: Practice with quotes, code snippets, lyrics, and more.
+- **Multi Language**: Practice Arabic and English language text with quotes, code snippets, lyrics, and more.
 - **Responsive Design**: Optimized for everything from mobile phones to high-resolution desktops.
 
 ## Tech Stack
 
-- **Core**: [Next.js 16](https://nextjs.org/), [React 19](https://reactjs.org/)
+- **Core**: [Tanstack Start](https://tanstack.com/start/)
 - **Styling**: [Tailwind CSS 4](https://tailwindcss.com/)
 - **Database**: [MongoDB](https://www.mongodb.com/)
 - **UI Components**: [Shadcn UI](https://ui.shadcn.com/)
 - **Charts**: [Recharts](https://recharts.org/)
-- **Tooling**: [Biome](https://biomejs.dev/) (Linting/Formatting), [Vitest](https://vitest.dev/) (Testing)
+- **Tooling**: [Eslint](https://eslint.org/) (Linting/Formatting), [Vitest](https://vitest.dev/) (Testing)
 
 ## Getting Started
 
