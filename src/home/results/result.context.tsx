@@ -76,16 +76,23 @@ export const ResultProvider = ({ children }: { children: ReactNode }) => {
     const durationMs = getTimeElapsed()
     const totalTyped = ks.filter((k) => k.typedChar !== "Backspace").length
     const correctKeys = ks.filter((k) => k.isCorrect).length
+    const errorCount = totalTyped - correctKeys
 
     return {
       wpm,
       mode,
       accuracy,
       durationMs,
+      errorCount,
       keystrokes: ks,
       charCount: totalTyped,
-      errorCount: totalTyped - correctKeys,
-      isInvalid: isSessionInvalid(wpm, accuracy, durationMs, ks.length),
+      isInvalid: isSessionInvalid({
+        wpm,
+        accuracy,
+        durationMs,
+        errorCount,
+        keystrokeCount: ks.length,
+      }),
       text: textData.text,
       category: textData.category,
       language: textData.language,
@@ -135,4 +142,3 @@ export const useResult = () => {
   }
   return ctx
 }
-

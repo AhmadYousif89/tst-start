@@ -159,11 +159,18 @@ export const EngineProvider = ({ children, data }: ProviderProps) => {
     const ks = keystrokes.current
     const totalTyped = ks.filter((k) => k.typedChar !== "Backspace").length
     const correctKeys = ks.filter((k) => k.isCorrect).length
+    const errorCount = totalTyped - correctKeys
 
     const finalWpm = calculateWpm(correctKeys, elapsed)
     const finalAccuracy = calculateAccuracy(correctKeys, totalTyped)
 
-    const isInvalid = isSessionInvalid(finalWpm, finalAccuracy, elapsed, ks.length)
+    const isInvalid = isSessionInvalid({
+      wpm: finalWpm,
+      accuracy: finalAccuracy,
+      durationMs: elapsed,
+      errorCount,
+      keystrokeCount: ks.length,
+    })
 
     sessionMetaPromiseRef.current =
       isInvalid ?

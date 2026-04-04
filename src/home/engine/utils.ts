@@ -43,16 +43,29 @@ const MIN_ACCURACY = 20
 const MIN_KEYSTROKES = 5
 const MIN_DURATION_MS = 2000
 
-export function isSessionInvalid(
-  wpm: number,
-  accuracy: number,
-  durationMs: number,
-  keystrokeCount: number,
-): boolean {
+/**
+ * Checks if a session is invalid based on WPM, accuracy, duration, error count, and keystroke count.
+ *
+ * @returns True if the session is invalid, false otherwise.
+ */
+export function isSessionInvalid({
+  wpm,
+  accuracy,
+  durationMs,
+  errorCount,
+  keystrokeCount,
+}: {
+  wpm: number
+  accuracy: number
+  durationMs: number
+  errorCount: number
+  keystrokeCount: number
+}): boolean {
   return (
     wpm < MIN_WPM ||
     accuracy < MIN_ACCURACY ||
     durationMs < MIN_DURATION_MS ||
-    keystrokeCount < MIN_KEYSTROKES
+    keystrokeCount < MIN_KEYSTROKES ||
+    errorCount > keystrokeCount / 2
   )
 }
