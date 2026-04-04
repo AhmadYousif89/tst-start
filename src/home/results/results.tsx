@@ -6,7 +6,7 @@ import { useResult } from "./result.context"
 
 import { ResultHeader } from "./layout/header"
 import { ResultFooter } from "./layout/footer"
-import { ResultSummary } from "./summary"
+import { ResultSection } from "./layout/section"
 
 const resultTags = {
   invalid: {
@@ -68,17 +68,14 @@ export const Results = () => {
     <main className="animate-in fade-in grow py-4 duration-500 md:py-6">
       <div
         id="result-screen"
-        className={cn(
-          "flex flex-col gap-6 md:gap-8",
-          isScreenshotting && "px-4 md:px-6",
-        )}>
+        className={cn(isScreenshotting && "px-4 md:px-6")}>
         <ResultHeader
           isNewRecord={isNewRecord}
           isInvalid={resultData.isInvalid}
           title={tags.title}
           subTitle={tags.subtitle}
         />
-        <ResultSummary />
+        <ResultSection />
         <ResultFooter
           caption={tags.caption}
           isNewRecord={isNewRecord}

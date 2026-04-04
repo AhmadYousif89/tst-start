@@ -1,12 +1,15 @@
 import { Image } from "@unpic/react"
-import { useCallback, useState } from "react"
+import { Activity, useCallback, useState } from "react"
 
 import Star1 from "/assets/images/pattern-star-1.svg"
 
-import { useResult } from "../result.context"
+import { cn } from "@/lib/utils"
+import { ReplaySection } from "../replay"
 import { ResultToolbar } from "../toolbar"
-import { AnalyticSection } from "../analytics"
+import { HeatmapHistory } from "../heatmap"
+import { useResult } from "../result.context"
 import { LogoImage } from "@/components/header/logo"
+import { ResponsiveTooltipProvider } from "@/components/responsive-tooltip"
 
 type Props = {
   caption?: string
@@ -32,26 +35,42 @@ export const ResultFooter = ({ caption, isNewRecord }: Props) => {
 
   const sessionIsValid = !resultData.isInvalid
   const sessionHasKeystrokes = resultData.keystrokes.length > 0
+  const effectiveShowHistory = isScreenshotting || showHistory
+  const effectiveShowReplay = !isScreenshotting && showReplay
+  const shouldShowHistory = effectiveShowHistory || isAnimatingHistory
+  const shouldShowReplay = effectiveShowReplay || isAnimatingReplay
 
   return (
     <footer className="text-background relative flex flex-col items-center justify-center gap-4 pb-4">
       {sessionHasKeystrokes ?
-        <AnalyticSection
-          showReplay={showReplay}
-          showHistory={showHistory}
-          isAnimatingReplay={isAnimatingReplay}
-          isAnimatingHistory={isAnimatingHistory}
-          setIsAnimatingReplay={setIsAnimatingReplay}
-          setIsAnimatingHistory={setIsAnimatingHistory}
-        />
-      : !sessionHasKeystrokes && sessionIsValid ?
-        <p className="text-muted-foreground pb-4 whitespace-nowrap">
-          Analytics are no longer available for this test.
-        </p>
-      : !sessionIsValid ?
-        <p className="text-muted-foreground pb-4 whitespace-nowrap">
-          No analytics available for this test.
-        </p>
+        <div className="mx-auto grid w-full max-w-5xl">
+          <div
+            className={cn(
+              isScreenshotting ? "block w-full" : (
+                "grid w-full transition-[grid-template-rows] duration-300 ease-in-out"
+              ),
+              effectiveShowHistory ? "grid-rows-[1fr]" : "grid-rows-[0fr]",
+            )}
+            onTransitionEnd={() => setIsAnimatingHistory(false)}>
+            <Activity mode={shouldShowHistory ? "visible" : "hidden"}>
+              <ResponsiveTooltipProvider>
+                <HeatmapHistory />
+              </ResponsiveTooltipProvider>
+            </Activity>
+          </div>
+          <div
+            className={cn(
+              isScreenshotting ? "grid-rows-[0fr]" : (
+                "mt-4 grid w-full transition-[grid-template-rows] duration-300 ease-in-out"
+              ),
+              effectiveShowReplay ? "grid-rows-[1fr]" : "grid-rows-[0fr]",
+            )}
+            onTransitionEnd={() => setIsAnimatingReplay(false)}>
+            <Activity mode={shouldShowReplay ? "visible" : "hidden"}>
+              <ReplaySection />
+            </Activity>
+          </div>
+        </div>
       : null}
 
       {!isScreenshotting && (
@@ -62,13 +81,13 @@ export const ResultFooter = ({ caption, isNewRecord }: Props) => {
         />
       )}
 
-      {sessionIsValid && !isNewRecord && (
+      {sessionIsValid && !isNewRecord && !isScreenshotting && (
         <Image
           src={Star1}
           alt="Star Pattern"
           width={40}
           height={40}
-          className="absolute right-0 -bottom-20 size-10 md:size-18"
+          className="absolute right-0 -bottom-10 size-10 md:size-18"
         />
       )}
 

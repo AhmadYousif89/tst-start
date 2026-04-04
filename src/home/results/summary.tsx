@@ -1,11 +1,11 @@
 import { useResult } from "./result.context"
 
-export const ResultSummary = () => {
+export const SessionSummary = () => {
   const { resultData } = useResult()
   const { wpm, accuracy, charCount, errorCount } = resultData
 
   return (
-    <section className="mx-auto flex w-full max-w-5xl flex-col justify-between gap-4 py-4 *:flex-1 md:flex-row md:gap-5 md:py-5 md:pb-8">
+    <div className="flex w-full max-w-5xl flex-col justify-between gap-4 place-self-center *:flex-1 md:flex-row md:gap-5">
       <div className="flex flex-col gap-3 rounded-md border px-6 py-4">
         <h2 className="text-muted-foreground text-3">WPM:</h2>
         <span className="text-foreground text-2">{Math.round(wpm)}</span>
@@ -24,6 +24,6 @@ export const ResultSummary = () => {
           <span className={errorCount > 0 ? "text-red" : "text-green"}>{errorCount}</span>
         </div>
       </div>
-    </section>
+    </div>
   )
 }
