@@ -10,6 +10,7 @@ import { MainContent } from "./main/content"
 import { ResultProvider } from "./results/result.context"
 import { useEngineConfig } from "./context/engine.context"
 import { useIncrementalProgress } from "@/hooks/use-incremental-progress"
+import { KeybindsModal } from "../components/keybinds.modal"
 
 export const Home = () => {
   const { status } = useEngineConfig()
@@ -36,6 +37,7 @@ export const Home = () => {
         </Suspense>
       }
       <Footer />
+      <KeybindsModal />
     </div>
   )
 }

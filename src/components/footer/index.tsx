@@ -13,7 +13,7 @@ export const Footer = () => {
   return (
     <footer
       aria-hidden={isImmersive}
-      className={cn("mt-auto grid gap-4", isImmersive && "immersive-mode")}>
+      className={cn("mt-auto grid", isImmersive && "immersive-mode")}>
       <ShortcutLegend />
 
       <div className="flex items-center justify-between gap-2">

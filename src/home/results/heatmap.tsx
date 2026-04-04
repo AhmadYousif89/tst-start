@@ -1,16 +1,18 @@
 import { useMemo, useState, memo } from "react"
+import { useHotkey } from "@tanstack/react-hotkeys"
 
 import { cn } from "@/lib/utils"
 import { useResult } from "./result.context"
 import { analyzeHeatmap, WordStats } from "./logic/heatmap"
 import { useMediaQuery } from "@/hooks/use-media-query"
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 import {
   ResponsiveTooltip,
   ResponsiveTooltipContent,
   ResponsiveTooltipTrigger,
 } from "@/components/responsive-tooltip"
+import { Kbd } from "@/components/ui/kbd"
 import { Button } from "@/components/ui/button"
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 import { HeatmapIcon } from "./icons/heatmap.icons"
 import { isRtlLang } from "../engine/utils"
 
@@ -141,6 +143,8 @@ export const HeatmapHistory = () => {
   const [isHeatmapVisible, setHeatmapVisibility] = useState(false)
   const isMobile = useMediaQuery("(max-width: 1024px)")
 
+  useHotkey("H", () => setHeatmapVisibility((pv) => !pv), { requireReset: true })
+
   const text = resultData.text
   const isRTL = isRtlLang(resultData.language)
   const effectiveIsEnabled = isScreenshotting || isHeatmapVisible
@@ -155,48 +159,13 @@ export const HeatmapHistory = () => {
 
   return (
     <div className="overflow-hidden">
-      {/* Header */}
-      <div className="flex items-center gap-4 py-2">
-        <div className="flex items-center gap-2">
-          <h3 className="text-muted-foreground/60 text-6 md:text-5 flex items-center gap-2">
-            input history
-          </h3>
-          <Tooltip open={isMobile ? false : undefined}>
-            <TooltipTrigger asChild>
-              <Button
-                size="icon"
-                variant="ghost"
-                aria-label="Toggle Heatmap"
-                aria-pressed={isHeatmapVisible || isScreenshotting}
-                className="group size-6 rounded-full hover:bg-transparent! focus-visible:border-transparent"
-                onClick={() => setHeatmapVisibility(!isHeatmapVisible)}>
-                <HeatmapIcon className="text-muted-foreground/75 group-hover:text-red group-aria-pressed:text-red size-5 md:size-6" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent side="top">
-              <span>Toggle Heatmap</span>
-            </TooltipContent>
-          </Tooltip>
-        </div>
-
-        {/* Legend / Heat Map */}
-        {effectiveIsEnabled && (
-          <div className="text-6 flex items-center overflow-hidden rounded-full font-mono">
-            {HEATMAP_COLORS.map((color, i) => (
-              <div
-                key={i}
-                className="text-background cursor-default px-1 py-0.5 font-mono sm:px-2"
-                style={{ backgroundColor: color }}>
-                {i === 0 ?
-                  `<${buckets[1]}`
-                : i === 4 ?
-                  `${buckets[4]}+`
-                : `${buckets[i]}-${buckets[i + 1]}`}
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
+      <HeatmapHeader
+        buckets={buckets}
+        isMobile={isMobile}
+        isHeatmapVisible={isHeatmapVisible}
+        setHeatmapVisibility={setHeatmapVisibility}
+        isScreenshotting={isScreenshotting}
+      />
 
       {/* Words History */}
       <div
@@ -218,6 +187,72 @@ export const HeatmapHistory = () => {
           )
         })}
       </div>
+    </div>
+  )
+}
+
+type HeatmapHeaderProps = {
+  isMobile: boolean
+  buckets: number[]
+  isHeatmapVisible: boolean
+  isScreenshotting: boolean
+  setHeatmapVisibility: (pv: boolean | ((pv: boolean) => boolean)) => void
+}
+
+const HeatmapHeader = ({
+  buckets,
+  isMobile,
+  isHeatmapVisible,
+  isScreenshotting,
+  setHeatmapVisibility,
+}: HeatmapHeaderProps) => {
+  const effectiveIsEnabled = isHeatmapVisible || isScreenshotting
+
+  return (
+    <div className="flex items-center gap-4 py-2">
+      <div className="flex items-center gap-2">
+        <h3 className="text-muted-foreground/60 text-6 md:text-5 flex items-center gap-2">
+          input history
+        </h3>
+        <Tooltip open={isMobile ? false : undefined}>
+          <TooltipTrigger asChild>
+            <Button
+              size="icon"
+              variant="ghost"
+              aria-label="Toggle Heatmap"
+              aria-pressed={isHeatmapVisible || isScreenshotting}
+              className="group size-6 rounded-full hover:bg-transparent! focus-visible:border-transparent"
+              onClick={() => setHeatmapVisibility((pv) => !pv)}>
+              <HeatmapIcon className="text-muted-foreground/75 group-hover:text-red group-aria-pressed:text-red size-5 md:size-6" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent
+            side="top"
+            className="flex items-center gap-1">
+            <span>
+              press <Kbd className="bg-foreground! rounded!">H</Kbd> to{" "}
+              {isHeatmapVisible ? "disable" : "enable"} heatmap
+            </span>
+          </TooltipContent>
+        </Tooltip>
+      </div>
+      {/* Legend / Heat Map */}
+      {effectiveIsEnabled && (
+        <div className="text-6 flex items-center overflow-hidden rounded-full font-mono">
+          {HEATMAP_COLORS.map((color, i) => (
+            <div
+              key={i}
+              className="text-background cursor-default px-1 py-0.5 font-mono sm:px-2"
+              style={{ backgroundColor: color }}>
+              {i === 0 ?
+                `<${buckets[1]}`
+              : i === 4 ?
+                `${buckets[4]}+`
+              : `${buckets[i]}-${buckets[i + 1]}`}
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   )
 }
