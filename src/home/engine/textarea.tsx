@@ -1,15 +1,14 @@
 import { useEffect } from "react"
-import { useKeyHold } from "@tanstack/react-hotkeys"
 
 import { cn } from "@/lib/utils"
 import { isRtlLang } from "./utils"
-import { getCharStates, getWordStart, isWordPerfect, calculateNextCursor } from "./logic"
 import {
   useEngineActions,
   useEngineConfig,
   useEngineKeystroke,
 } from "../context/engine.context"
 import { useSound } from "../context/sound.context"
+import { getCharStates, getWordStart, isWordPerfect, calculateNextCursor } from "./logic"
 
 const SIDE_BUFFER = 40
 
@@ -28,8 +27,6 @@ export const TypingInput = ({
   const configCtx = useEngineConfig()
   const ActionsCtx = useEngineActions()
   const keystrokeCtx = useEngineKeystroke()
-
-  const ctrlIsHeld = useKeyHold("Control")
 
   const { status, textData, isFocused } = configCtx
   const { cursor, extraOffset, keystrokes, lockedCursorRef } = keystrokeCtx
@@ -53,6 +50,7 @@ export const TypingInput = ({
   }
 
   const handleTyping = (typedChar: string) => {
+    if (!isFocused) return
     if (status === "finished" || cursor >= characters.length) return
     if (typedChar === " " && cursor === 0) return
 
@@ -155,11 +153,9 @@ export const TypingInput = ({
   }
 
   const handleKeydown = (e: React.KeyboardEvent) => {
-    if (status === "finished") return
+    if (!isFocused || status === "finished") return
 
     const typedChar = e.key
-    // Prevent typing the "s" key when user attempt to open the setting panel
-    if (typedChar === "s" && ctrlIsHeld) return
 
     if (typedChar === "Backspace") {
       e.preventDefault()
