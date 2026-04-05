@@ -43,9 +43,10 @@ export type EngineState = {
   progress: number
   timeLeft: number
   isFocused: boolean
-  layout: {
+  view: {
     startIndex: number // starting index of the current word
     version: number // increments on layout changes to trigger Cursor rerender
+    activeOverlays: string[] // IDs of currently active overlays
   }
 }
 
@@ -57,9 +58,10 @@ export type EngineConfigCtxType = {
   isLoaded: boolean
   isImmersive: boolean
   isFocused: boolean
-  layout: {
+  view: {
     startIndex: number
     version: number
+    activeOverlays: string[]
   }
 }
 
@@ -99,7 +101,9 @@ export type EngineActionsCtxType = {
   setStatus: (s: EngineStatus) => void
   setFocused: (isFocused: boolean) => void
   setTextData: (textData: TextDoc, shouldFocus?: boolean) => void
-  updateLayout: (opts?: { shouldReset?: boolean; newStartIndex?: number }) => void
+  updateView: (opts?: { shouldReset?: boolean; newStartIndex?: number }) => void
+  registerOverlay: (id: string) => void
+  unregisterOverlay: (id: string) => void
   setCursor: (cursor: number | ((prev: number) => number), extraOffset?: number) => void
   sessionMetaPromiseRef: React.RefObject<Promise<SessionMeta> | null>
 }
@@ -115,6 +119,8 @@ export type EngineAction =
   | { type: "SET_FOCUSED"; isFocused: boolean }
   | { type: "SET_STATUS"; status: EngineStatus }
   | { type: "SET_METRICS"; wpm: number; accuracy: number }
+  | { type: "REGISTER_OVERLAY"; id: string }
+  | { type: "UNREGISTER_OVERLAY"; id: string }
   | {
       type: "SET_CURSOR"
       cursor: number | ((prev: number) => number)
@@ -122,7 +128,7 @@ export type EngineAction =
       extraOffset?: number
     }
   | {
-      type: "UPDATE_LAYOUT"
+      type: "UPDATE_VIEW"
       shouldReset?: boolean
       newStartIndex?: number
     }

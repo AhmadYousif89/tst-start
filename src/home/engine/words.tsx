@@ -34,14 +34,14 @@ export const wordsGroup = (characters: string[]) => {
 export const Words = memo(({ characters }: { characters: string[] }) => {
   const configCtx = useEngineConfig()
   const keystrokeCtx = useEngineKeystroke()
-  const { updateLayout } = useEngineActions()
+  const { updateView } = useEngineActions()
 
   const wordsRef = useRef<HTMLDivElement>(null)
 
   const { cursor, extraOffset, keystrokes, lockedCursorRef } = keystrokeCtx
-  const { textData, status, layout, isFocused } = configCtx
-  const startIndex = layout.startIndex
-  const layoutVersion = layout.version
+  const { textData, status, view, isFocused } = configCtx
+  const startIndex = view.startIndex
+  const layoutVersion = view.version
 
   const groupedWords = useMemo(() => wordsGroup(characters), [characters])
   const charStates = useMemo(
@@ -82,12 +82,12 @@ export const Words = memo(({ characters }: { characters: string[] }) => {
   // Scroll to top and reset breaks when cursor is 0 (new test/reset)
   useEffect(() => {
     if (cursor === 0 && status === "typing") {
-      updateLayout({ shouldReset: true })
+      updateView({ shouldReset: true })
       lockedCursorRef.current = 0
       wordsRef.current?.scrollTo({ top: 0, behavior: "smooth" })
       calculateRowBreaks()
     }
-  }, [cursor, status, updateLayout, calculateRowBreaks])
+  }, [cursor, status, updateView, calculateRowBreaks])
 
   // Update locked cursor when startIndex changes
   useEffect(() => {
@@ -95,9 +95,9 @@ export const Words = memo(({ characters }: { characters: string[] }) => {
       const firstVisibleWord = groupedWords[startIndex]
       const firstCharIndex = firstVisibleWord[0].index
       lockedCursorRef.current = firstCharIndex
-      updateLayout()
+      updateView()
     }
-  }, [startIndex, groupedWords, updateLayout])
+  }, [startIndex, groupedWords, updateView])
 
   // Calculate row breaks on mount and resize
   useEffect(() => {
@@ -130,7 +130,7 @@ export const Words = memo(({ characters }: { characters: string[] }) => {
       startIndex,
       rowBreaks.current,
     )
-    if (shouldShift) updateLayout({ newStartIndex })
+    if (shouldShift) updateView({ newStartIndex })
   }, [
     cursor,
     status,
@@ -139,7 +139,7 @@ export const Words = memo(({ characters }: { characters: string[] }) => {
     groupedWords,
     layoutVersion,
     calculateRowBreaks,
-    updateLayout,
+    updateView,
   ])
 
   const isRTL = isRtlLang(textData.language)

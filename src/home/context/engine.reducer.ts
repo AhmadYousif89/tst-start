@@ -10,9 +10,10 @@ export const initialState: EngineState = {
   accuracy: 100,
   extraOffset: 0,
   isFocused: false,
-  layout: {
+  view: {
     startIndex: 0,
     version: 0,
+    activeOverlays: [],
   },
   textData: {} as TextDoc,
 }
@@ -28,6 +29,10 @@ export const engineReducer = (state: EngineState, action: EngineAction): EngineS
         isFocused,
         textData: state.textData,
         timeLeft: action.timeLeft,
+        view: {
+          ...initialState.view,
+          activeOverlays: state.view.activeOverlays,
+        },
       }
     }
     case "START":
@@ -94,6 +99,23 @@ export const engineReducer = (state: EngineState, action: EngineAction): EngineS
         wpm: action.wpm,
         accuracy: action.accuracy,
       }
+    case "REGISTER_OVERLAY":
+      if (state.view.activeOverlays.includes(action.id)) return state
+      return {
+        ...state,
+        view: {
+          ...state.view,
+          activeOverlays: [...state.view.activeOverlays, action.id],
+        },
+      }
+    case "UNREGISTER_OVERLAY":
+      return {
+        ...state,
+        view: {
+          ...state.view,
+          activeOverlays: state.view.activeOverlays.filter((id) => id !== action.id),
+        },
+      }
     case "SET_TEXT":
       return {
         ...state,
@@ -101,18 +123,20 @@ export const engineReducer = (state: EngineState, action: EngineAction): EngineS
         cursor: 0,
         progress: 0,
         extraOffset: 0,
-        layout: {
+        view: {
+          ...state.view,
           startIndex: 0,
           version: 0,
         },
       }
-    case "UPDATE_LAYOUT":
+    case "UPDATE_VIEW":
       return {
         ...state,
-        layout: {
+        view: {
+          ...state.view,
           startIndex:
-            action.shouldReset ? 0 : (action.newStartIndex ?? state.layout.startIndex),
-          version: action.shouldReset ? 0 : state.layout.version + 1,
+            action.shouldReset ? 0 : (action.newStartIndex ?? state.view.startIndex),
+          version: action.shouldReset ? 0 : state.view.version + 1,
         },
       }
 

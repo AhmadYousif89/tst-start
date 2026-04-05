@@ -88,7 +88,10 @@ export const EngineProvider = ({ children, data }: ProviderProps) => {
   useShortcutKeys({
     status: state.status,
     isFocused: state.isFocused,
-    setFocused: (v) => dispatch({ type: "SET_FOCUSED", isFocused: v }),
+    setFocused: (v) => {
+      if (v && state.view.activeOverlays.length > 0) return
+      dispatch({ type: "SET_FOCUSED", isFocused: v })
+    },
   })
 
   useSyncLanguage({
@@ -212,15 +215,34 @@ export const EngineProvider = ({ children, data }: ProviderProps) => {
     dispatch({ type: "SET_STATUS", status })
   }, [])
 
-  const setFocused = useCallback((isFocused: boolean) => {
-    dispatch({ type: "SET_FOCUSED", isFocused })
-  }, [])
+  const setFocused = useCallback(
+    (v: boolean) => {
+      if (v && state.view.activeOverlays.length > 0) return
+      dispatch({ type: "SET_FOCUSED", isFocused: v })
+    },
+    [state.view.activeOverlays.length],
+  )
 
-  const updateLayout = useCallback(
+  const updateView = useCallback(
     (opts?: { shouldReset?: boolean; newStartIndex?: number }) => {
-      dispatch({ type: "UPDATE_LAYOUT", ...opts })
+      dispatch({ type: "UPDATE_VIEW", ...opts })
     },
     [],
+  )
+
+  const registerOverlay = useCallback((id: string) => {
+    dispatch({ type: "REGISTER_OVERLAY", id })
+    dispatch({ type: "SET_FOCUSED", isFocused: false })
+  }, [])
+
+  const unregisterOverlay = useCallback(
+    (id: string) => {
+      dispatch({ type: "UNREGISTER_OVERLAY", id })
+      if (state.view.activeOverlays.length === 1) {
+        dispatch({ type: "SET_FOCUSED", isFocused: true })
+      }
+    },
+    [state.view.activeOverlays.length],
   )
 
   /* -------------------- EFFECTS -------------------- */
@@ -243,7 +265,7 @@ export const EngineProvider = ({ children, data }: ProviderProps) => {
       isLoaded,
       isImmersive,
       status: state.status,
-      layout: state.layout,
+      view: state.view,
       textData: state.textData,
       isFocused: state.isFocused,
     }),
@@ -253,7 +275,7 @@ export const EngineProvider = ({ children, data }: ProviderProps) => {
       isLoaded,
       isImmersive,
       state.status,
-      state.layout,
+      state.view,
       state.textData,
       state.isFocused,
     ],
@@ -291,7 +313,9 @@ export const EngineProvider = ({ children, data }: ProviderProps) => {
       setStatus,
       setFocused,
       setTextData,
-      updateLayout,
+      updateView,
+      registerOverlay,
+      unregisterOverlay,
       sessionMetaPromiseRef,
     }),
     [
@@ -305,7 +329,9 @@ export const EngineProvider = ({ children, data }: ProviderProps) => {
       setCursor,
       setFocused,
       setTextData,
-      updateLayout,
+      updateView,
+      registerOverlay,
+      unregisterOverlay,
     ],
   )
 

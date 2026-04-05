@@ -36,7 +36,7 @@ export const TypingInput = ({
   const ActionsCtx = useEngineActions()
   const keystrokeCtx = useEngineKeystroke()
 
-  const { status, textData, isFocused, layout } = configCtx
+  const { status, textData, isFocused, view } = configCtx
   const { cursor, extraOffset, keystrokes, lockedCursorRef } = keystrokeCtx
   const { endSession, startSession, resumeSession, getTimeElapsed, setCursor } =
     ActionsCtx
@@ -302,7 +302,7 @@ export const TypingInput = ({
     }
     typingInputRef.current?.style.setProperty("width", `${width}px`)
     typingInputRef.current?.style.setProperty("height", `${height}px`)
-  }, [wordIndex, layout.version, isRTL])
+  }, [wordIndex, view.version, isRTL])
 
   return (
     <textarea

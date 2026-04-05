@@ -15,13 +15,15 @@ import { Kbd, KbdGroup } from "@/components/ui/kbd"
 import { useEngineActions } from "../home/context/engine.context"
 
 export const KeybindsModal = () => {
-  const { setFocused } = useEngineActions()
+  const { registerOverlay, unregisterOverlay } = useEngineActions()
   const [isOpen, setIsOpen] = useState(false)
 
   const toggleModal = () => {
     const nextState = !isOpen
     if (nextState) {
-      setFocused(false)
+      registerOverlay("keybinds")
+    } else {
+      unregisterOverlay("keybinds")
     }
     setIsOpen(nextState)
   }
@@ -31,7 +33,7 @@ export const KeybindsModal = () => {
   return (
     <AlertDialog
       open={isOpen}
-      onOpenChange={setIsOpen}>
+      onOpenChange={toggleModal}>
       <AlertDialogContent className="max-w-md">
         <AlertDialogHeader>
           <div className="flex items-center gap-3">

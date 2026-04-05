@@ -38,7 +38,7 @@ export const Cursor = memo(
     const cursorIndicatorRef = useRef<HTMLDivElement>(null)
     const { cursorStyle: currentCursorStyle } = useTextSettings()
 
-    const { status, textData, layout, isFocused } = config
+    const { status, textData, view, isFocused } = config
     const cursor = cursorProp ?? keystroke.cursor
     const extraOffset = extraOffsetProp ?? keystroke.extraOffset
 
@@ -98,7 +98,7 @@ export const Cursor = memo(
       return () => {
         if (rafId !== null) cancelAnimationFrame(rafId)
       }
-    }, [isRTL, cursor, extraOffset, cursorStyle, layout.version, windowWidth])
+    }, [isRTL, cursor, extraOffset, cursorStyle, view.version, windowWidth])
 
     const shouldBlink = status !== "typing" && !isReplaying && isFocused
 

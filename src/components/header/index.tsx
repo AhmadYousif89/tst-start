@@ -22,18 +22,20 @@ import { useEngineConfig, useEngineActions } from "@/home/context/engine.context
 
 export const Header = () => {
   const { isImmersive } = useEngineConfig()
-  const { setFocused } = useEngineActions()
+  const { registerOverlay, unregisterOverlay } = useEngineActions()
   const [showSettings, setShowSettings] = useState(false)
 
-  const handleOpenChange = () => {
+  const toggleSettings = () => {
     const nextState = !showSettings
     if (nextState) {
-      setFocused(false)
+      registerOverlay("settings")
+    } else {
+      unregisterOverlay("settings")
     }
     setShowSettings(nextState)
   }
 
-  useHotkey("Mod+S", handleOpenChange, { requireReset: true })
+  useHotkey("Mod+S", toggleSettings, { requireReset: true })
 
   return (
     <header className="flex items-center justify-between gap-2">
@@ -46,7 +48,7 @@ export const Header = () => {
 
         <Drawer
           open={showSettings}
-          onOpenChange={setShowSettings}>
+          onOpenChange={toggleSettings}>
           <DrawerTrigger
             asChild
             suppressHydrationWarning>
