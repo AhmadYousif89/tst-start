@@ -6,9 +6,14 @@ import {
   useEngineConfig,
   useEngineActions,
 } from "../context/engine.context"
+import {
+  getCharStates,
+  calculateLayoutShift,
+  getWordIndexByCursor,
+  getWordRanges,
+} from "./logic"
 import { Word } from "./word"
 import { isRtlLang } from "./utils"
-import { getCharStates, calculateLayoutShift } from "./logic"
 
 // Group characters into words (prevents mid-word line breaks)
 export const wordsGroup = (characters: string[]) => {
@@ -50,7 +55,7 @@ export const Words = memo(({ characters }: { characters: string[] }) => {
     const container = wordsRef.current
     if (!container) return
 
-    const wordElements = container.querySelectorAll("[data-word-index]")
+    const wordElements = container.querySelectorAll("[data-wordindex]")
     const wordElemList = Array.from(wordElements) as HTMLElement[]
 
     if (wordElemList.length === 0) {
@@ -64,7 +69,7 @@ export const Words = memo(({ characters }: { characters: string[] }) => {
 
     for (const el of wordElemList) {
       const top = el.offsetTop
-      const wordIndexAttr = el.getAttribute("data-word-index") || "0"
+      const wordIndexAttr = el.getAttribute("data-wordindex") || "0"
       const wordIndex = parseInt(wordIndexAttr, 10)
       if (lastTop === null || Math.abs(top - lastTop) > fuzzPxs) {
         breaks.push(wordIndex)
@@ -111,24 +116,20 @@ export const Words = memo(({ characters }: { characters: string[] }) => {
 
   useEffect(() => {
     if (status !== "typing") return
-
     // Find the word index the cursor is currently in
-    const activeWordIndex = groupedWords.findIndex(
-      (w) => cursor >= w[0].index && cursor <= w[w.length - 1].index,
-    )
-
+    const wordRange = getWordRanges(textData.text)
+    const activeWordIndex = getWordIndexByCursor(cursor, wordRange)
     // Only run logic if we've moved to a new word OR if we have extras (which might change layout)
     if (activeWordIndex === lastWordChecked.current && extraOffset === 0) return
     lastWordChecked.current = activeWordIndex
-
+    // If we have an extra offset, we need to recalculate row breaks
     if (extraOffset > 0) calculateRowBreaks()
-
+    // Check if we need to shift the layout to keep the active word in view
     const { shouldShift, newStartIndex } = calculateLayoutShift(
       activeWordIndex,
       startIndex,
       rowBreaks.current,
     )
-
     if (shouldShift) updateLayout({ newStartIndex })
   }, [
     cursor,
@@ -141,7 +142,7 @@ export const Words = memo(({ characters }: { characters: string[] }) => {
     updateLayout,
   ])
 
-  const isRTL = isRtlLang(textData?.language)
+  const isRTL = isRtlLang(textData.language)
 
   return (
     <div
