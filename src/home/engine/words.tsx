@@ -38,7 +38,7 @@ export const Words = memo(({ characters }: WordsProps) => {
   const wordsRef = useRef<HTMLDivElement>(null)
 
   const { cursor, extraOffset, keystrokes, lockedCursorRef } = keystrokeCtx
-  const { textData, status, layout, showOverlay } = configCtx
+  const { textData, status, layout, isFocused } = configCtx
   const startIndex = layout.startIndex
   const layoutVersion = layout.version
 
@@ -153,7 +153,7 @@ export const Words = memo(({ characters }: WordsProps) => {
       dir={isRTL ? "rtl" : "ltr"}
       className={cn(
         "relative flex flex-wrap transition-[opacity,filter] duration-300 ease-in-out select-none",
-        showOverlay && "opacity-50 blur-xs select-none dark:opacity-30",
+        !isFocused && "opacity-50 blur-xs select-none dark:opacity-30",
         isRTL ? "font-arabic pr-1 [word-spacing:1rem]" : "pl-1 font-mono",
       )}>
       {groupedWords.slice(startIndex).map((word, i) => {

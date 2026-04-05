@@ -245,7 +245,6 @@ export const EngineProvider = ({ children, data }: ProviderProps) => {
       layout: state.layout,
       textData: state.textData,
       isFocused: state.isFocused,
-      showOverlay: state.showOverlay,
     }),
     [
       mode,
@@ -256,7 +255,6 @@ export const EngineProvider = ({ children, data }: ProviderProps) => {
       state.layout,
       state.textData,
       state.isFocused,
-      state.showOverlay,
     ],
   )
 

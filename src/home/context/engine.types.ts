@@ -43,7 +43,6 @@ export type EngineState = {
   progress: number
   timeLeft: number
   isFocused: boolean
-  showOverlay: boolean
   layout: {
     startIndex: number // starting index of the current word
     version: number // increments on layout changes to trigger Cursor rerender
@@ -58,7 +57,6 @@ export type EngineConfigCtxType = {
   isLoaded: boolean
   isImmersive: boolean
   isFocused: boolean
-  showOverlay: boolean
   layout: {
     startIndex: number
     version: number
@@ -115,7 +113,6 @@ export type EngineAction =
   | { type: "TICK"; isTimed: boolean; wpm?: number; accuracy?: number }
   | { type: "SET_TEXT"; textData: TextDoc }
   | { type: "SET_FOCUSED"; isFocused: boolean }
-  | { type: "SET_SHOW_OVERLAY"; showOverlay: boolean }
   | { type: "SET_STATUS"; status: EngineStatus }
   | { type: "SET_METRICS"; wpm: number; accuracy: number }
   | {

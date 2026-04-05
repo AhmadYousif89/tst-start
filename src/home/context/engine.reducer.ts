@@ -10,7 +10,6 @@ export const initialState: EngineState = {
   accuracy: 100,
   extraOffset: 0,
   isFocused: false,
-  showOverlay: true,
   layout: {
     startIndex: 0,
     version: 0,
@@ -19,6 +18,7 @@ export const initialState: EngineState = {
 }
 
 export const engineReducer = (state: EngineState, action: EngineAction): EngineState => {
+  console.log("Action: ", action)
   switch (action.type) {
     case "RESET": {
       const isFocused = action.shouldFocus ?? state.isFocused
@@ -28,7 +28,6 @@ export const engineReducer = (state: EngineState, action: EngineAction): EngineS
         ...initialState,
         status,
         isFocused,
-        showOverlay: isFocused ? false : status !== "finished",
         textData: state.textData,
         timeLeft: action.timeLeft,
       }
@@ -84,13 +83,6 @@ export const engineReducer = (state: EngineState, action: EngineAction): EngineS
       return {
         ...state,
         isFocused: action.isFocused,
-        showOverlay: action.isFocused ? false : state.status !== "finished",
-      }
-    case "SET_SHOW_OVERLAY":
-      if (state.showOverlay === action.showOverlay) return state
-      return {
-        ...state,
-        showOverlay: action.showOverlay,
       }
     case "SET_STATUS":
       if (state.status === action.status) return state

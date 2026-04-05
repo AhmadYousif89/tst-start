@@ -38,14 +38,12 @@ export const Cursor = memo(
     const cursorIndicatorRef = useRef<HTMLDivElement>(null)
     const { cursorStyle: currentCursorStyle } = useTextSettings()
 
-    const { status, showOverlay, textData, layout, isFocused } = config
+    const { status, textData, layout, isFocused } = config
     const cursor = cursorProp ?? keystroke.cursor
     const extraOffset = extraOffsetProp ?? keystroke.extraOffset
 
-    const isRTL = isRTLProp || isRtlLang(textData?.language)
+    const isRTL = isRTLProp || isRtlLang(textData.language)
     const cursorStyle = cursorStyleProp ?? currentCursorStyle
-    const isBoxy = cursorStyle === "box" || cursorStyle === "underline"
-    const layoutVersion = layout.version
 
     useLayoutEffect(() => {
       let rafId: number | null = null
@@ -62,9 +60,10 @@ export const Cursor = memo(
         const cursorRect = cursorEl.getBoundingClientRect()
         const { scrollTop, scrollLeft } = container
 
+        const hasWideShape = cursorStyle === "box" || cursorStyle === "underline"
         const left =
           isRTL ?
-            isBoxy ? cursorRect.left - containerRect.left + scrollLeft
+            hasWideShape ? cursorRect.left - containerRect.left + scrollLeft
             : cursorRect.right - containerRect.left + scrollLeft
           : cursorRect.left - containerRect.left + scrollLeft
 
@@ -75,7 +74,7 @@ export const Cursor = memo(
           height: cursorRect.height,
         }
 
-        const width = isBoxy ? position.width || 0 : 2
+        const width = hasWideShape ? position.width || 0 : 2
         const height =
           cursorStyle === "underline" ? 2 : (position.height || 0) * (isRTL ? 0.85 : 0.9)
         const top =
@@ -99,19 +98,9 @@ export const Cursor = memo(
       return () => {
         if (rafId !== null) cancelAnimationFrame(rafId)
       }
-    }, [
-      textData.text,
-      cursor,
-      extraOffset,
-      isRTL,
-      cursorStyle,
-      isBoxy,
-      layoutVersion,
-      windowWidth,
-      showOverlay,
-    ])
+    }, [isRTL, cursor, extraOffset, cursorStyle, layout.version, windowWidth])
 
-    const shouldBlink = status !== "typing" && !isReplaying && !showOverlay && isFocused
+    const shouldBlink = status !== "typing" && !isReplaying && isFocused
 
     return (
       <div
@@ -120,7 +109,7 @@ export const Cursor = memo(
           "pointer-events-none absolute z-10 rounded bg-blue-400/90 transition-all duration-50 will-change-[left,top,width,height]",
           (status === "typing" || isReplaying) && "duration-200",
           shouldBlink && "animate-blink",
-          showOverlay && "invisible opacity-0",
+          !isFocused && "invisible opacity-0",
           cursorStyle === "box" && "border-2 border-blue-400/90 bg-transparent",
         )}
       />
