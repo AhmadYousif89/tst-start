@@ -12,17 +12,18 @@ import {
   AlertDialogAction,
 } from "@/components/ui/alert-dialog"
 import { Kbd, KbdGroup } from "@/components/ui/kbd"
-import { useEngineActions, useEngineConfig } from "../home/context/engine.context"
+import { useEngineActions } from "../home/context/engine.context"
 
 export const KeybindsModal = () => {
   const { setFocused } = useEngineActions()
-  const { isFocused } = useEngineConfig()
   const [isOpen, setIsOpen] = useState(false)
 
   const toggleModal = () => {
     const nextState = !isOpen
+    if (nextState) {
+      setFocused(false)
+    }
     setIsOpen(nextState)
-    if (nextState && isFocused) setFocused(false)
   }
 
   useHotkey("Mod+K", toggleModal, { requireReset: true })

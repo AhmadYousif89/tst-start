@@ -4,26 +4,31 @@ import { EngineStatus, EngineAction } from "../context/engine.types"
 type ExperienceProps = {
   status: EngineStatus
   isFocused: boolean
+  isImmersive: boolean
   dispatch: React.Dispatch<EngineAction>
 }
 
-export const useEngineExperience = ({ status, isFocused, dispatch }: ExperienceProps) => {
+export const useEngineExperience = ({
+  status,
+  isFocused,
+  isImmersive,
+  dispatch,
+}: ExperienceProps) => {
   const overlayTimerRef = useRef<NodeJS.Timeout | null>(null)
   const statusRef = useRef(status)
 
-  // Sync status for the timer closure
+  // Guard against stale status
   useEffect(() => {
     statusRef.current = status
   }, [status])
 
   // Hide mouse cursor during immersive mode
   useEffect(() => {
-    const isImmersive = status === "typing"
     document.documentElement.classList.toggle("cursor-none", isImmersive)
     return () => {
       document.documentElement.classList.remove("cursor-none")
     }
-  }, [status])
+  }, [isImmersive])
 
   // Handle auto-pause when focus is lost
   useEffect(() => {

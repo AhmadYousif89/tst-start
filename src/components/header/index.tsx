@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { SettingsIcon } from "lucide-react"
 import { useHotkey } from "@tanstack/react-hotkeys"
 
@@ -18,28 +18,22 @@ import {
 } from "@/components/ui/drawer"
 import { Button } from "@/components/ui/button"
 import { SettingsPanel } from "@/components/settings-panel"
-import { useEngineConfig } from "@/home/context/engine.context"
+import { useEngineConfig, useEngineActions } from "@/home/context/engine.context"
 
 export const Header = () => {
   const { isImmersive } = useEngineConfig()
+  const { setFocused } = useEngineActions()
   const [showSettings, setShowSettings] = useState(false)
 
-  useHotkey("Mod+S", () => setShowSettings((pv) => !pv), { requireReset: true })
-
-  // Ensure panels receive focus when opened via keyboard shortcuts
-  useEffect(() => {
-    if (showSettings) {
-      if (document.activeElement instanceof HTMLElement) {
-        document.activeElement.blur()
-      }
-      // Small delay to ensure the portal is rendered
-      const timer = setTimeout(() => {
-        const drawer = document.querySelector('[data-slot="drawer-content"]')
-        if (drawer instanceof HTMLElement) drawer.focus()
-      }, 100)
-      return () => clearTimeout(timer)
+  const handleOpenChange = () => {
+    const nextState = !showSettings
+    if (nextState) {
+      setFocused(false)
     }
-  }, [showSettings])
+    setShowSettings(nextState)
+  }
+
+  useHotkey("Mod+S", handleOpenChange, { requireReset: true })
 
   return (
     <header className="flex items-center justify-between gap-2">

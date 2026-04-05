@@ -13,7 +13,7 @@ export const EngineContainer = () => {
   const { textData, status } = useEngineConfig()
 
   const containerRef = useRef<HTMLDivElement>(null)
-  const typingInputRef = useRef<HTMLTextAreaElement>(null)
+  const typingInputRef = useRef<HTMLTextAreaElement | null>(null)
 
   const characters = useMemo(() => textData.text.split("") || [], [textData.text])
 

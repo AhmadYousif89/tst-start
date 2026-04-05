@@ -6,6 +6,7 @@ import React, {
   useRef,
   useContext,
 } from "react"
+import { useHotkey } from "@tanstack/react-hotkeys"
 
 import { TextDoc } from "@/lib/types"
 import { submitSession } from "@/server/user"
@@ -29,7 +30,6 @@ import { useSyncLanguage } from "../hooks/use-sync-language"
 import { useMetricsTick } from "../hooks/use-metrics-tick"
 import { useEngineExperience } from "../hooks/use-engine-experience"
 import { useMouseShake } from "../hooks/use-mouse-shake"
-import { useHotkey } from "@tanstack/react-hotkeys"
 
 const EngineConfigCtx = createContext<EngineConfigCtxType | undefined>(undefined)
 
@@ -66,6 +66,7 @@ export const EngineProvider = ({ children, data }: ProviderProps) => {
 
   useEngineExperience({
     dispatch,
+    isImmersive,
     status: state.status,
     isFocused: state.isFocused,
   })
@@ -114,7 +115,7 @@ export const EngineProvider = ({ children, data }: ProviderProps) => {
         type: "RESET",
         timeLeft: getInitialTime(modeToUse),
         ...(opts?.status && { status: opts.status }),
-        shouldFocus: opts?.shouldFocus,
+        ...(opts?.shouldFocus && { shouldFocus: opts.shouldFocus }),
       })
       keystrokes.current = []
       timerRef.current = null
@@ -286,12 +287,12 @@ export const EngineProvider = ({ children, data }: ProviderProps) => {
       pauseSession,
       resumeSession,
       getTimeElapsed,
-      setStatus,
-      sessionMetaPromiseRef,
-      setTextData,
-      setFocused,
-      updateLayout,
       setCursor,
+      setStatus,
+      setFocused,
+      setTextData,
+      updateLayout,
+      sessionMetaPromiseRef,
     }),
     [
       endSession,
@@ -301,10 +302,10 @@ export const EngineProvider = ({ children, data }: ProviderProps) => {
       resumeSession,
       getTimeElapsed,
       setStatus,
-      setTextData,
-      setFocused,
-      updateLayout,
       setCursor,
+      setFocused,
+      setTextData,
+      updateLayout,
     ],
   )
 
