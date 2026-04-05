@@ -3,14 +3,9 @@ import { ReplyIcon } from "lucide-react"
 import { useHotkey } from "@tanstack/react-hotkeys"
 
 import { cn } from "@/lib/utils"
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip"
 import { Kbd } from "@/components/ui/kbd"
 import { Button } from "@/components/ui/button"
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 
 import { useReplay } from "./use-replay"
 import { useResult } from "./result.context"
@@ -172,47 +167,45 @@ const ReplayToolbar = ({
             watch replay
           </p>
           <div className="flex items-center gap-1">
-            <TooltipProvider delayDuration={200}>
-              <Tooltip open={isMobile ? false : undefined}>
-                <TooltipTrigger asChild>
-                  <Button
-                    size="icon"
-                    variant="ghost"
-                    title="Play/Pause"
-                    aria-label="play/pause"
-                    onClick={isPlaying ? pause : play}
-                    className="text-muted-foreground/75 size-6 rounded-full focus-visible:border-transparent">
-                    {isPlaying ?
-                      <PauseIcon />
-                    : <PlayIcon />}
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent
-                  side="top"
-                  className="flex items-center gap-1">
-                  press <Kbd className="bg-foreground! rounded!">P</Kbd> to{" "}
-                  {isPlaying ? "pause" : "play"}
-                </TooltipContent>
-              </Tooltip>
-              <Tooltip open={isMobile ? false : undefined}>
-                <TooltipTrigger asChild>
-                  <Button
-                    size="icon"
-                    title="Reset"
-                    variant="ghost"
-                    aria-label="replay"
-                    onClick={reset}
-                    className="text-muted-foreground/75 size-6 rounded-full focus-visible:border-transparent">
-                    <ReplyIcon className="size-4" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent
-                  side="top"
-                  className="flex items-center gap-1">
-                  press <Kbd className="bg-foreground! rounded!">R</Kbd> to reset
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+            <Tooltip open={isMobile ? false : undefined}>
+              <TooltipTrigger asChild>
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  title="Play/Pause"
+                  aria-label="play/pause"
+                  onClick={isPlaying ? pause : play}
+                  className="text-muted-foreground/75 size-6 rounded-full focus-visible:border-transparent">
+                  {isPlaying ?
+                    <PauseIcon />
+                  : <PlayIcon />}
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent
+                side="top"
+                className="flex items-center gap-1">
+                press <Kbd className="bg-foreground! rounded!">P</Kbd> to{" "}
+                {isPlaying ? "pause" : "play"}
+              </TooltipContent>
+            </Tooltip>
+            <Tooltip open={isMobile ? false : undefined}>
+              <TooltipTrigger asChild>
+                <Button
+                  size="icon"
+                  title="Reset"
+                  variant="ghost"
+                  aria-label="replay"
+                  onClick={reset}
+                  className="text-muted-foreground/75 size-6 rounded-full focus-visible:border-transparent">
+                  <ReplyIcon className="size-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent
+                side="top"
+                className="flex items-center gap-1">
+                press <Kbd className="bg-foreground! rounded!">R</Kbd> to reset
+              </TooltipContent>
+            </Tooltip>
           </div>
         </div>
         {/* WPM and time */}

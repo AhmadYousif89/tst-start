@@ -208,6 +208,50 @@ export const getWordStart = (index: number, characters: string[]): number => {
 }
 
 /**
+ * Finds the ending index of the word containing the character at the given index.
+ */
+export const getWordEnd = (index: number, characters: string[]): number => {
+  let wordEnd = index
+  while (wordEnd < characters.length && characters[wordEnd] !== " ") {
+    wordEnd++
+  }
+  return wordEnd
+}
+
+/**
+ * Returns the index of the word that the cursor is currently in.
+ */
+export const getWordIndexByCursor = (
+  cursor: number,
+  wordRanges: { start: number; end: number }[],
+) => {
+  for (let i = 0; i < wordRanges.length; i++) {
+    const wordRange = wordRanges[i]
+    if (cursor >= wordRange.start && cursor <= wordRange.end) {
+      return i
+    }
+  }
+  return -1
+}
+
+/**
+ * Returns the start and end indices of each word in the text.
+ */
+export function getWordRanges(text: string) {
+  let startIdxPointer = 0
+  const words = text.split(" ")
+
+  const wordRanges = words.map((word) => {
+    const start = startIdxPointer
+    const end = start + word.length
+    startIdxPointer = end + 1
+    return { start, end }
+  })
+
+  return wordRanges
+}
+
+/**
  * Checks if a range of characters has been typed perfectly correctly.
  */
 export const isWordPerfect = (
@@ -227,23 +271,6 @@ export const isWordPerfect = (
   // Check the space (or final char): must have no extras
   const lastCharExtras = charStates[endIndex]?.extras?.length || 0
   return lastCharExtras === 0
-}
-
-/**
- * Returns the start and end indices of each word in the text.
- */
-export function getWordRanges(text: string) {
-  let startIdxPointer = 0
-  const words = text.split(" ")
-
-  const wordRanges = words.map((word) => {
-    const start = startIdxPointer
-    const end = start + word.length
-    startIdxPointer = end + 1
-    return { start, end }
-  })
-
-  return wordRanges
 }
 
 type ShiftLayoutResult = {

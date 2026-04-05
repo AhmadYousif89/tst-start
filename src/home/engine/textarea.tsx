@@ -1,4 +1,4 @@
-import { useEffect } from "react"
+import { useEffect, useMemo } from "react"
 
 import { cn } from "@/lib/utils"
 import { isRtlLang } from "./utils"
@@ -8,7 +8,15 @@ import {
   useEngineKeystroke,
 } from "../context/engine.context"
 import { useSound } from "../context/sound.context"
-import { getCharStates, getWordStart, isWordPerfect, calculateNextCursor } from "./logic"
+import {
+  getCharStates,
+  getWordStart,
+  isWordPerfect,
+  calculateNextCursor,
+  getWordEnd,
+  getWordRanges,
+  getWordIndexByCursor,
+} from "./logic"
 
 const SIDE_BUFFER = 40
 
@@ -28,7 +36,7 @@ export const TypingInput = ({
   const ActionsCtx = useEngineActions()
   const keystrokeCtx = useEngineKeystroke()
 
-  const { status, textData, isFocused } = configCtx
+  const { status, textData, isFocused, layout } = configCtx
   const { cursor, extraOffset, keystrokes, lockedCursorRef } = keystrokeCtx
   const { endSession, startSession, resumeSession, getTimeElapsed, setCursor } =
     ActionsCtx
@@ -259,20 +267,58 @@ export const TypingInput = ({
 
   const isRTL = isRtlLang(textData?.language)
 
+  const { currentWord } = useMemo(() => {
+    const wordStartIndex = getWordStart(cursor, characters)
+    const wordEndIndex = getWordEnd(cursor, characters)
+    const currentWord = textData.text.slice(wordStartIndex, wordEndIndex)
+    return { currentWord }
+  }, [cursor, characters, textData.text])
+
+  const wordRanges = useMemo(() => getWordRanges(textData.text), [textData.text])
+  const wordIndex = useMemo(
+    () => getWordIndexByCursor(cursor, wordRanges),
+    [cursor, wordRanges],
+  )
+
+  useEffect(() => {
+    if (!containerRef.current) return
+    const wordEl = containerRef.current.querySelector(
+      `[data-wordindex="${wordIndex}"]`,
+    ) as HTMLElement
+    if (!wordEl) return
+    const top = wordEl.offsetTop
+    const width = wordEl.offsetWidth
+    const height = wordEl.offsetHeight
+    const left = wordEl.offsetLeft
+    const right = containerRef.current.offsetWidth - wordEl.offsetLeft - width
+
+    typingInputRef.current?.style.setProperty("top", `${top}px`)
+    if (isRTL) {
+      typingInputRef.current?.style.setProperty("right", `${right}px`)
+      typingInputRef.current?.style.setProperty("left", `auto`)
+    } else {
+      typingInputRef.current?.style.setProperty("left", `${left}px`)
+      typingInputRef.current?.style.setProperty("right", `auto`)
+    }
+    typingInputRef.current?.style.setProperty("width", `${width}px`)
+    typingInputRef.current?.style.setProperty("height", `${height}px`)
+  }, [wordIndex, layout.version, isRTL])
+
   return (
     <textarea
       ref={typingInputRef}
+      aria-label={currentWord}
       onKeyDown={handleKeydown}
       onBeforeInput={handleBeforeInput}
       dir={isRTL ? "rtl" : "ltr"}
+      autoCapitalize="none"
+      spellCheck="false"
+      autoCorrect="off"
+      inputMode="text"
       className={cn(
-        "pointer-events-none absolute top-0 h-14 w-6 resize-none overflow-hidden opacity-0 outline-none",
+        "pointer-events-none absolute resize-none overflow-hidden opacity-0 outline-none",
         isRTL ? "right-0" : "left-0",
       )}
-      autoCapitalize="none"
-      autoCorrect="off"
-      spellCheck="false"
-      inputMode="text"
     />
   )
 }

@@ -30,13 +30,12 @@ export const Word = memo(
 
     return (
       <div
-        data-word-index={wordIndex}
+        data-wordindex={wordIndex}
         className={cn(
           "word",
           isRTL ? "inline-block tracking-normal" : "flex items-center",
           className,
         )}>
-        {/* Characters */}
         {word.map(({ char, index }) => {
           return (
             <Character
@@ -49,7 +48,6 @@ export const Word = memo(
             />
           )
         })}
-        {/* Error underline */}
         <div
           style={{ width: isLastCharSpace ? "calc(100% - 1ch)" : "100%" }}
           className={cn(

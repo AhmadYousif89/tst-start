@@ -26,11 +26,7 @@ export const wordsGroup = (characters: string[]) => {
   return result
 }
 
-type WordsProps = {
-  characters: string[]
-}
-
-export const Words = memo(({ characters }: WordsProps) => {
+export const Words = memo(({ characters }: { characters: string[] }) => {
   const configCtx = useEngineConfig()
   const keystrokeCtx = useEngineKeystroke()
   const { updateLayout } = useEngineActions()
@@ -152,7 +148,7 @@ export const Words = memo(({ characters }: WordsProps) => {
       ref={wordsRef}
       dir={isRTL ? "rtl" : "ltr"}
       className={cn(
-        "relative flex flex-wrap transition-[opacity,filter] duration-300 ease-in-out select-none",
+        "flex flex-wrap transition-[opacity,filter] duration-300 ease-in-out select-none",
         !isFocused && "opacity-50 blur-xs select-none dark:opacity-30",
         isRTL ? "font-arabic pr-1 [word-spacing:1rem]" : "pl-1 font-mono",
       )}>

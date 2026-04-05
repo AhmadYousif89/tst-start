@@ -21,7 +21,7 @@ export const Character = memo(
             {extras?.map((extra, i) => (
               <span
                 key={i}
-                className="text-red">
+                className="text-red/70">
                 {extra}
               </span>
             ))}

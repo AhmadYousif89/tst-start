@@ -66,6 +66,7 @@ export const Results = () => {
 
   return (
     <main className="animate-in fade-in grow py-4 duration-500 md:py-6">
+      <h1 className="sr-only">Your test analysis</h1>
       <div
         id="result-screen"
         className={cn(isScreenshotting && "px-4 md:px-6")}>

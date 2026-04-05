@@ -39,8 +39,13 @@ export const Metrics = () => {
         </div>
       </div>
 
-      {/* Progress Bar */}
-      <div className="bg-border h-px w-full overflow-hidden rounded-full">
+      <div
+        role="progressbar"
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-valuenow={progress}
+        aria-label="Progress bar"
+        className="bg-border h-px w-full overflow-hidden rounded-full">
         <div
           className="h-full bg-blue-600 transition-[width] duration-300 ease-out"
           style={{ width: `${progress}%` }}

@@ -53,6 +53,7 @@ export const Header = () => {
             <Button
               size="icon"
               variant="ghost"
+              aria-label="Settings panel"
               className="focus-visible:ring-offset-2">
               <SettingsIcon className="size-5" />
             </Button>
