@@ -21,6 +21,13 @@ export const Progressbar = ({ progress, className }: ProgressbarProps) => {
         style={{ width: `${progress}%` }}
         className="absolute inset-y-0 rounded-full bg-blue-600 transition-[width] duration-300 dark:bg-blue-400"
       />
+      <span
+        id="progress-live"
+        className="sr-only"
+        aria-live="polite"
+        aria-atomic="true">
+        {progress}% complete
+      </span>
     </div>
   )
 }

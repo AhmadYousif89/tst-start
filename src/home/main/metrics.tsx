@@ -1,10 +1,14 @@
 import { formatTime } from "../engine/utils"
 import { useEngineConfig, useEngineMetrics } from "../context/engine.context"
 import { Progressbar } from "@/components/ui/progress-bar"
+import { useHydrated } from "@tanstack/react-router"
 
 export const Metrics = () => {
+  const hydrated = useHydrated()
   const { mode, status } = useEngineConfig()
   const { wpm, accuracy, timeLeft, progress } = useEngineMetrics()
+
+  if (!hydrated) return null
 
   let timeLeftStyle = ""
   if (status === "typing" || status === "paused")

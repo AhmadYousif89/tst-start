@@ -1,4 +1,4 @@
-import { Suspense } from "react"
+import { Activity, Suspense } from "react"
 
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
@@ -15,31 +15,29 @@ import { KeybindsModal } from "../components/keybinds.modal"
 export const Home = () => {
   const { status } = useEngineConfig()
   const { progress, msg } = useIncrementalProgress(status === "loading", 1000)
+  const isLoading = status === "loading" || progress > 0
 
-  if (status === "loading" || progress > 0) {
-    return (
-      <main>
+  return (
+    <>
+      <Activity mode={isLoading ? "visible" : "hidden"}>
         <LoadingScreen
           progress={progress}
           msg={msg}
         />
-      </main>
-    )
-  }
-
-  return (
-    <div className="container">
-      <Header />
-      {status !== "finished" ?
-        <MainContent />
-      : <Suspense fallback={<Spinner />}>
-          <ResultProvider>
-            <Results />
-          </ResultProvider>
-        </Suspense>
-      }
-      <Footer />
-      <KeybindsModal />
-    </div>
+      </Activity>
+      <div className="container">
+        <Header />
+        {status !== "finished" ?
+          <MainContent shouldAnimate={!isLoading} />
+        : <Suspense fallback={<Spinner />}>
+            <ResultProvider>
+              <Results />
+            </ResultProvider>
+          </Suspense>
+        }
+        <Footer />
+        <KeybindsModal />
+      </div>
+    </>
   )
 }

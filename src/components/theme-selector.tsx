@@ -8,6 +8,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { useHydrated } from "@tanstack/react-router"
 
 const themes = [
   { value: "light", label: "Light" },
@@ -15,7 +16,10 @@ const themes = [
 ]
 
 export const ThemeSelector = () => {
+  const hydrated = useHydrated()
   const { resolvedTheme, setTheme } = useTheme()
+
+  if (!hydrated) return null
 
   return (
     <div className="text-muted-foreground/50 flex items-center">

@@ -3,7 +3,7 @@ import { Progressbar } from "./ui/progress-bar"
 
 export const LoadingScreen = ({ progress, msg }: { progress: number; msg: string }) => {
   return (
-    <div className="bg-background animate-in fade-in fixed inset-0 z-100 grid content-center justify-items-center gap-8 px-8 font-mono duration-500">
+    <div className="bg-background fixed inset-0 z-100 grid content-center justify-items-center gap-8 px-8 font-mono">
       <Progressbar
         progress={progress}
         className="max-w-md"
