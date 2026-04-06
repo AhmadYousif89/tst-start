@@ -2,6 +2,7 @@ import { createPortal } from "react-dom"
 
 import { cn } from "@/lib/utils"
 import { useIncrementalProgress } from "@/hooks/use-incremental-progress"
+import { Progressbar } from "./ui/progress-bar"
 
 type Props = {
   isPending?: boolean
@@ -15,20 +16,13 @@ export const TopLoader = ({
   className,
 }: Props) => {
   const simulatedProgress = useIncrementalProgress(isPending)
-  const progress = progressProp !== undefined ? progressProp : simulatedProgress
-
-  if (progress === 0 || typeof window === "undefined") return null
+  const progress = progressProp !== undefined ? progressProp : simulatedProgress.progress
 
   return createPortal(
-    <div className="pointer-events-none fixed inset-0 isolate z-1000 grid size-full place-items-start">
-      <div
-        className={cn(
-          "dark:bg-green h-0.5 bg-blue-400 transition-all duration-500 ease-out",
-          className,
-        )}
-        style={{ width: `${progress}%` }}
-      />
-    </div>,
+    <Progressbar
+      progress={progress}
+      className={cn("fixed top-0 left-0 h-1 duration-1000", className)}
+    />,
     document.body,
   )
 }

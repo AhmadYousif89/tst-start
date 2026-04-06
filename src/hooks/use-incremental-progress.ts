@@ -9,10 +9,10 @@ export function useIncrementalProgress(isPending: boolean, delay: number = 500) 
       setProgress(1)
       const timer = setInterval(() => {
         setProgress((oldProgress) => {
-          if (oldProgress >= 90) return oldProgress
-          setMsg("Almost there...")
+          setMsg("Downloading user data")
+          if (oldProgress >= 70) return oldProgress
           const diff = Math.random() * 5
-          return Math.min(oldProgress + diff, 90)
+          return Math.min(oldProgress + diff, 70)
         })
       }, 100)
 

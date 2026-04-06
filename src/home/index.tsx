@@ -18,10 +18,12 @@ export const Home = () => {
 
   if (status === "loading" || progress > 0) {
     return (
-      <LoadingScreen
-        progress={progress}
-        msg={msg}
-      />
+      <main>
+        <LoadingScreen
+          progress={progress}
+          msg={msg}
+        />
+      </main>
     )
   }
 

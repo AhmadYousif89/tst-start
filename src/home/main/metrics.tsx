@@ -1,5 +1,6 @@
 import { formatTime } from "../engine/utils"
 import { useEngineConfig, useEngineMetrics } from "../context/engine.context"
+import { Progressbar } from "@/components/ui/progress-bar"
 
 export const Metrics = () => {
   const { mode, status } = useEngineConfig()
@@ -39,18 +40,10 @@ export const Metrics = () => {
         </div>
       </div>
 
-      <div
-        role="progressbar"
-        aria-valuemin={0}
-        aria-valuemax={100}
-        aria-valuenow={progress}
-        aria-label="Progress bar"
-        className="bg-border h-px w-full overflow-hidden rounded-full">
-        <div
-          className="h-full bg-blue-600 transition-[width] duration-300 ease-out"
-          style={{ width: `${progress}%` }}
-        />
-      </div>
+      <Progressbar
+        progress={progress}
+        className="h-px"
+      />
     </div>
   )
 }

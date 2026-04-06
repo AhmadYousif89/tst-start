@@ -120,12 +120,7 @@ export const ResultProvider = ({ children }: { children: ReactNode }) => {
         setIsScreenshotting,
       }}>
       {children}
-      {isScreenshotting && (
-        <TopLoader
-          progress={loadingProgress}
-          className="duration-1000"
-        />
-      )}
+      {isScreenshotting && <TopLoader progress={loadingProgress} />}
       {isScreenshotting &&
         createPortal(
           <div className="animate-flash bg-foreground pointer-events-none fixed inset-0 z-1001 delay-50" />,
