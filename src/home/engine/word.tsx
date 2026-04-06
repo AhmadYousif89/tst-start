@@ -12,10 +12,20 @@ type WordProps = {
   cursor: number
   className?: string
   isReplay?: boolean
+  typedIndices?: Set<number>
 }
 
 export const Word = memo(
-  ({ isRTL, wordIndex, word, charStates, cursor, className, isReplay }: WordProps) => {
+  ({
+    isRTL,
+    wordIndex,
+    word,
+    charStates,
+    cursor,
+    className,
+    isReplay,
+    typedIndices,
+  }: WordProps) => {
     const lastCharObj = word[word.length - 1]
     const isLastCharSpace = lastCharObj.char === " "
     const endIndex = lastCharObj.index
@@ -41,6 +51,13 @@ export const Word = memo(
             <Character
               key={`${index}-${char}`}
               isRTL={isRTL}
+              index={
+                isReplay ?
+                  typedIndices?.has(index) ?
+                    index
+                  : undefined
+                : undefined
+              }
               char={char}
               state={charStates[index].state}
               extras={charStates[index].extras}

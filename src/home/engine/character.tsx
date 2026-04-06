@@ -8,10 +8,11 @@ type CharacterProps = {
   isRTL: boolean
   extras?: string[]
   className?: string
+  index?: number
 }
 
 export const Character = memo(
-  ({ char, state, isRTL, extras, className }: CharacterProps) => {
+  ({ char, state, isRTL, extras, className, index }: CharacterProps) => {
     return (
       <>
         {extras?.length ?
@@ -28,8 +29,9 @@ export const Character = memo(
           </div>
         : null}
         <span
+          data-charindex={index}
           className={cn(
-            "relative transition-colors duration-100 ease-linear",
+            "data-charindex:hover:bg-muted/40 relative transition-colors duration-100 ease-linear data-charindex:cursor-pointer",
             isRTL ? "inline" : "inline-flex",
             state === "correct" && "text-green",
             state === "incorrect" && "text-red",

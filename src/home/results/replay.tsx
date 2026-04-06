@@ -26,6 +26,7 @@ export const ReplaySection = () => {
   const containerRef = useRef<HTMLDivElement>(null)
 
   const ks = useMemo(() => resultData.keystrokes, [resultData.keystrokes])
+  const typedIndices = useMemo(() => new Set(ks.map((k) => k.charIndex)), [ks])
 
   const replay = useReplay({ keystrokes: ks, playSound })
   const { currentIndex } = replay
@@ -44,10 +45,13 @@ export const ReplaySection = () => {
     return chars
   }, [text, ks])
 
-  const replayedKeystrokes = useMemo(() => ks.slice(0, currentIndex), [ks, currentIndex])
+  const replayedKeystrokes = useMemo(
+    () => new Set(ks.slice(0, currentIndex)),
+    [ks, currentIndex],
+  )
 
   const charStates = useMemo(
-    () => getCharStates(characters, replayedKeystrokes),
+    () => getCharStates(characters, [...replayedKeystrokes]),
     [characters, replayedKeystrokes],
   )
 
@@ -71,6 +75,22 @@ export const ReplaySection = () => {
     return { cursor, extraOffset: currentExtras }
   }, [replayedKeystrokes, characters, charStates])
 
+  const handleTimelineClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    const target = e.target as HTMLElement
+    const charIndex = parseInt(target.getAttribute("data-charindex") || "", 10)
+    if (!isNaN(charIndex)) {
+      let ksIndex = ks.findIndex((k) => k.charIndex === charIndex)
+      if (ksIndex !== -1) {
+        replay.jumpToIndex(ksIndex + 1)
+      } else {
+        ksIndex = ks.findIndex((k) => k.charIndex > charIndex)
+        if (ksIndex !== -1)
+          replay.jumpToIndex(ksIndex) // first keystroke after the jumped character
+        else replay.jumpToIndex(ks.length) // last keystroke
+      }
+    }
+  }
+
   return (
     <div className="overflow-hidden">
       <ReplayToolbar
@@ -84,6 +104,7 @@ export const ReplaySection = () => {
       <div
         ref={containerRef}
         dir={isRTL ? "rtl" : "ltr"}
+        onClick={handleTimelineClick}
         className={cn(
           "relative flex flex-wrap items-center gap-x-1 pb-2 select-none",
           isRTL ? "font-arabic" : "font-mono",
@@ -104,6 +125,7 @@ export const ReplaySection = () => {
             wordIndex={wordIndex}
             charStates={charStates}
             cursor={cursorIndex}
+            typedIndices={typedIndices}
             className="text-5"
             isReplay
           />
