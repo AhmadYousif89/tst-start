@@ -5,6 +5,7 @@ import { useHotkey } from "@tanstack/react-hotkeys"
 import { cn } from "@/lib/utils"
 import { Logo } from "./logo"
 import { PersonalBest } from "./personal-best"
+import { SettingsPanel } from "../settings-panel"
 
 import {
   Drawer,
@@ -14,10 +15,8 @@ import {
   DrawerFooter,
   DrawerHeader,
   DrawerTitle,
-  DrawerTrigger,
 } from "@/components/ui/drawer"
 import { Button } from "@/components/ui/button"
-import { SettingsPanel } from "@/components/settings-panel"
 import { useEngineConfig, useEngineActions } from "@/home/context/engine.context"
 
 export const Header = () => {
@@ -49,18 +48,19 @@ export const Header = () => {
         <Drawer
           open={showSettings}
           onOpenChange={toggleSettings}>
-          <DrawerTrigger
-            asChild
-            suppressHydrationWarning>
-            <Button
-              size="icon"
-              variant="ghost"
-              aria-label="Settings panel"
-              className="focus-visible:ring-offset-2">
-              <SettingsIcon className="size-5" />
-            </Button>
-          </DrawerTrigger>
+          <Button
+            size="icon"
+            variant="ghost"
+            onClick={toggleSettings}
+            aria-label="Settings panel"
+            aria-expanded={showSettings}
+            aria-controls={showSettings ? "settings-drawer-content" : undefined}
+            className="focus-visible:ring-offset-2">
+            <SettingsIcon className="size-5" />
+          </Button>
+
           <DrawerContent
+            id="settings-drawer-content"
             onCloseAutoFocus={(e) => e.preventDefault()}
             className="mx-auto xl:max-w-304 [&[data-vaul-drawer-direction][data-vaul-drawer-direction]]:rounded-none">
             <DrawerHeader>

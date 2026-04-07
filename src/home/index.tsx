@@ -1,3 +1,4 @@
+import { lazy } from "react"
 import { Activity, Suspense } from "react"
 
 import { Header } from "@/components/header"
@@ -5,12 +6,17 @@ import { Footer } from "@/components/footer"
 import { Spinner } from "@/components/spinner"
 import { LoadingScreen } from "@/components/loading-screen"
 
-import { Results } from "./results/results"
 import { MainContent } from "./main/content"
 import { ResultProvider } from "./results/result.context"
 import { useEngineConfig } from "./context/engine.context"
 import { useIncrementalProgress } from "@/hooks/use-incremental-progress"
-import { KeybindsModal } from "../components/keybinds.modal"
+
+const Results = lazy(() =>
+  import("./results/results").then((m) => ({ default: m.Results })),
+)
+const KeybindsModal = lazy(() =>
+  import("../components/keybinds.modal").then((m) => ({ default: m.KeybindsModal })),
+)
 
 export const Home = () => {
   const { status } = useEngineConfig()
@@ -36,7 +42,9 @@ export const Home = () => {
           </Suspense>
         }
         <Footer />
-        <KeybindsModal />
+        <Suspense fallback={null}>
+          <KeybindsModal />
+        </Suspense>
       </div>
     </>
   )

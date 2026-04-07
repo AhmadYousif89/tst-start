@@ -8,8 +8,6 @@ export const Metrics = () => {
   const { mode, status } = useEngineConfig()
   const { wpm, accuracy, timeLeft, progress } = useEngineMetrics()
 
-  if (!hydrated) return null
-
   let timeLeftStyle = ""
   if (status === "typing" || status === "paused")
     timeLeftStyle = "dark:text-yellow text-orange"
@@ -39,7 +37,7 @@ export const Metrics = () => {
         <div className="flex flex-col gap-2 max-md:grow md:flex-row md:gap-3">
           <span className="text-muted-foreground text-3-mobile md:text-3">Time:</span>
           <span className={`text-2 min-w-20 ${timeLeftStyle}`}>
-            {formatTime(timeLeft)}
+            {hydrated ? formatTime(timeLeft) : "--"}
           </span>
         </div>
       </div>

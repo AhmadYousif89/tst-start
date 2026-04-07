@@ -28,7 +28,11 @@ export const ThemeSelector = () => {
         onValueChange={setTheme}>
         <SelectTrigger
           data-icon="hide"
+          aria-label="Theme selector"
           className="text-6 hover:text-muted-foreground focus-visible:text-muted-foreground px-2 py-0">
+          <span className="sr-only">
+            {`Current theme: ${themes.find((t) => t.value === resolvedTheme)?.label || "System"}`}
+          </span>
           <PaletteIcon className="size-4" />
           <SelectValue placeholder="System" />
         </SelectTrigger>

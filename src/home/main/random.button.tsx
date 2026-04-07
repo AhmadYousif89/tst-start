@@ -40,10 +40,11 @@ export const RandomButton = () => {
           <Button
             size="icon"
             variant="ghost"
-            className="text-muted-foreground focus-visible:ring-offset-2"
+            aria-label="Randomize"
             disabled={isFetching}
+            onClick={handleRandomize}
             onMouseDown={(e) => e.preventDefault()}
-            onClick={handleRandomize}>
+            className="text-muted-foreground focus-visible:ring-offset-2">
             <RefreshCcwIcon className={cn("size-5", isFetching && "animate-spin")} />
           </Button>
         </TooltipTrigger>
