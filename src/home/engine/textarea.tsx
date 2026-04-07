@@ -40,6 +40,7 @@ export const TypingInput = ({
   const { cursor, extraOffset, keystrokes, lockedCursorRef } = keystrokeCtx
   const { endSession, startSession, resumeSession, getTimeElapsed, setCursor } =
     ActionsCtx
+  const isRTL = isRtlLang(textData?.language)
 
   useEffect(() => {
     typingInputRef.current?.focus()
@@ -81,7 +82,6 @@ export const TypingInput = ({
           isRTL ?
             cursorRect.left < containerRect.left + SIDE_BUFFER
           : cursorRect.right > containerRect.right - SIDE_BUFFER
-
         if (isOverflowing) return
       }
     }
@@ -264,8 +264,6 @@ export const TypingInput = ({
       handleTyping(typedChar)
     }
   }
-
-  const isRTL = isRtlLang(textData?.language)
 
   const { currentWord } = useMemo(() => {
     const wordStartIndex = getWordStart(cursor, characters)

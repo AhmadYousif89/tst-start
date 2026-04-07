@@ -145,7 +145,7 @@ export const Words = memo(({ characters }: { characters: string[] }) => {
   const isRTL = isRtlLang(textData.language)
 
   return (
-    <div
+    <article
       ref={wordsRef}
       dir={isRTL ? "rtl" : "ltr"}
       className={cn(
@@ -166,6 +166,6 @@ export const Words = memo(({ characters }: { characters: string[] }) => {
           />
         )
       })}
-    </div>
+    </article>
   )
 })

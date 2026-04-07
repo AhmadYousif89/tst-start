@@ -3,6 +3,7 @@ import { cn } from "@/lib/utils"
 export const HeatmapIcon = ({ className }: { className: string }) => {
   return (
     <svg
+      aria-hidden="true"
       className={cn("fill-current", className)}
       xmlns="http://www.w3.org/2000/svg"
       height="24px"

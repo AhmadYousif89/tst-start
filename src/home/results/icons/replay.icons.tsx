@@ -1,5 +1,6 @@
 export const PlayIcon = () => (
   <svg
+    aria-hidden="true"
     className="size-5"
     viewBox="0 0 24 24"
     fill="currentColor">
@@ -9,6 +10,7 @@ export const PlayIcon = () => (
 
 export const PauseIcon = () => (
   <svg
+    aria-hidden="true"
     className="size-5"
     viewBox="0 0 24 24"
     fill="currentColor">

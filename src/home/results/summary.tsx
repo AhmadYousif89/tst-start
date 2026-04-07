@@ -6,17 +6,17 @@ export const SessionSummary = () => {
 
   return (
     <div className="flex w-full max-w-5xl flex-col justify-between gap-4 place-self-center *:flex-1 md:flex-row md:gap-5">
-      <div className="flex flex-col gap-3 rounded-md border px-6 py-4">
+      <div className="border-border flex flex-col gap-3 rounded-md border px-6 py-4">
         <h2 className="text-muted-foreground text-3">WPM:</h2>
         <span className="text-foreground text-2">{Math.round(wpm)}</span>
       </div>
-      <div className="flex flex-col gap-3 rounded-md border px-6 py-4">
+      <div className="border-border flex flex-col gap-3 rounded-md border px-6 py-4">
         <h2 className="text-muted-foreground text-3">Accuracy:</h2>
         <span className={`${accuracy < 100 ? "text-red" : "text-green"} text-2`}>
           {Math.round(accuracy)}%
         </span>
       </div>
-      <div className="flex flex-col gap-3 rounded-md border px-6 py-4">
+      <div className="border-border flex flex-col gap-3 rounded-md border px-6 py-4">
         <h2 className="text-muted-foreground text-3">Characters:</h2>
         <div className="text-muted-foreground text-2">
           <span className="text-foreground">{charCount}</span>

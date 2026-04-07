@@ -26,10 +26,12 @@ export const Home = () => {
   return (
     <>
       <Activity mode={isLoading ? "visible" : "hidden"}>
-        <LoadingScreen
-          progress={progress}
-          msg={msg}
-        />
+        <main>
+          <LoadingScreen
+            progress={progress}
+            msg={msg}
+          />
+        </main>
       </Activity>
       <div className="container">
         <Header />

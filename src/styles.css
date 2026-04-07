@@ -26,7 +26,6 @@
   --color-primary-foreground: var(--primary-foreground);
   --color-primary: var(--primary);
   --color-secondary: var(--secondary);
-  --color-input: var(--input);
   --color-accent-foreground: var(--accent-foreground);
   --color-accent: var(--accent);
   --color-secondary-foreground: var(--secondary-foreground);
@@ -127,9 +126,6 @@
 }
 
 @layer base {
-  * {
-    @apply border-border outline-ring/50;
-  }
   body {
     @apply bg-background text-foreground flex min-h-dvh flex-col font-sans antialiased;
   }
