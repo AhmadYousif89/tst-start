@@ -11,7 +11,11 @@ import { useServerFn } from "@tanstack/react-start"
 
 import { getAnonUser, updateAnonUser } from "@/server/user"
 import { EngineSettings } from "./settings.types"
-import { getStoredSettings, updateStoredSettings } from "./settings.utils"
+import {
+  getStoredSettings,
+  updateStoredSettings,
+  DEFAULT_SETTINGS,
+} from "./settings.utils"
 import { TextLanguage, TextMode, CursorStyle } from "./engine.types"
 import { SoundNames } from "./sound.types"
 
@@ -27,11 +31,11 @@ type SettingsAction =
   | { type: "SET_SOUND_NAME"; name: SoundNames }
   | { type: "SET_VOLUME"; volume: number }
   | { type: "SET_IS_MUTED"; isMuted: boolean }
-  | { type: "SYNC_SETTINGS"; settings: Partial<EngineSettings> }
+  | { type: "SYNC_SETTINGS"; settings: Partial<EngineSettings>; isLoaded?: boolean }
   | { type: "UP_SYNC_COMPLETE" }
 
 const initialState: SettingsState = {
-  ...getStoredSettings(),
+  ...DEFAULT_SETTINGS,
   isLoaded: false,
   settingsDidUpdate: false,
 }
@@ -72,7 +76,7 @@ const settingsReducer = (state: SettingsState, action: SettingsAction): Settings
 
     case "SYNC_SETTINGS":
       updateStoredSettings({ ...currentStored, ...action.settings })
-      return { ...state, ...action.settings, isLoaded: true }
+      return { ...state, ...action.settings, isLoaded: action.isLoaded ?? state.isLoaded }
 
     case "UP_SYNC_COMPLETE":
       return { ...state, settingsDidUpdate: false }
@@ -99,7 +103,15 @@ export const SettingsProvider = ({ children }: { children: React.ReactNode }) =>
   useEffect(() => {
     async function sync() {
       const user = await getUserFn()
-      dispatch({ type: "SYNC_SETTINGS", settings: user?.settings || {} })
+      if (user?.settings) {
+        dispatch({
+          type: "SYNC_SETTINGS",
+          settings: user.settings,
+          isLoaded: true,
+        })
+      } else {
+        dispatch({ type: "SYNC_SETTINGS", settings: {}, isLoaded: true })
+      }
     }
 
     sync()

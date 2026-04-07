@@ -5,6 +5,7 @@ import React, {
   useMemo,
   useRef,
   useContext,
+  useEffect,
 } from "react"
 import { useHotkey } from "@tanstack/react-hotkeys"
 
@@ -255,6 +256,13 @@ export const EngineProvider = ({ children, data }: ProviderProps) => {
     endSession,
     getTimeElapsed,
   })
+
+  const didInitSettingsSyncRef = useRef(false)
+  useEffect(() => {
+    if (!isLoaded || didInitSettingsSyncRef.current) return
+    didInitSettingsSyncRef.current = true
+    resetSession({ newMode: mode, shouldFocus: false })
+  }, [isLoaded, mode, resetSession])
 
   /* -------------------- PROVIDER VALUES -------------------- */
 
