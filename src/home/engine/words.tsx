@@ -55,8 +55,8 @@ export const Words = memo(({ characters }: { characters: string[] }) => {
     const container = wordsRef.current
     if (!container) return
 
-    const wordElements = container.querySelectorAll("[data-wordindex]")
-    const wordElemList = Array.from(wordElements) as HTMLElement[]
+    const wordElements = container.querySelectorAll<HTMLElement>("[data-wordindex]")
+    const wordElemList = Array.from(wordElements)
 
     if (wordElemList.length === 0) {
       rowBreaks.current = []

@@ -1,4 +1,4 @@
-import { useLayoutEffect, memo, useRef } from "react"
+import { memo, useRef, useEffect } from "react"
 
 import { cn } from "@/lib/utils"
 import { isRtlLang } from "./utils"
@@ -45,7 +45,7 @@ export const Cursor = memo(
     const isRTL = isRTLProp || isRtlLang(textData.language)
     const cursorStyle = cursorStyleProp ?? currentCursorStyle
 
-    useLayoutEffect(() => {
+    useEffect(() => {
       let rafId: number | null = null
 
       const measureAndApply = () => {
@@ -53,7 +53,7 @@ export const Cursor = memo(
         const indicator = cursorIndicatorRef.current
         if (!container || !indicator) return false
 
-        const cursorEl = container.querySelector(".active-cursor") as HTMLElement | null
+        const cursorEl = container.querySelector<HTMLElement>(".active-cursor")
         if (!cursorEl) return false
 
         const containerRect = container.getBoundingClientRect()
@@ -106,11 +106,11 @@ export const Cursor = memo(
       <div
         ref={cursorIndicatorRef}
         className={cn(
-          "pointer-events-none absolute z-10 rounded bg-blue-400/90 transition-all duration-50 will-change-[left,top,width,height]",
+          "bg-ring/90 pointer-events-none absolute z-10 rounded transition-all duration-50 will-change-[left,top,width,height]",
           (status === "typing" || isReplaying) && "duration-200",
           shouldBlink && "animate-blink",
           !isFocused && "invisible opacity-0",
-          cursorStyle === "box" && "border-2 border-blue-400/90 bg-transparent",
+          cursorStyle === "box" && "border-ring/90 border-2 bg-transparent",
         )}
       />
     )

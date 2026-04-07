@@ -282,9 +282,9 @@ export const TypingInput = ({
 
   useEffect(() => {
     if (!containerRef.current) return
-    const wordEl = containerRef.current.querySelector(
+    const wordEl = containerRef.current.querySelector<HTMLElement>(
       `[data-wordindex="${wordIndex}"]`,
-    ) as HTMLElement
+    )
     if (!wordEl) return
     const top = wordEl.offsetTop
     const width = wordEl.offsetWidth
@@ -305,20 +305,32 @@ export const TypingInput = ({
   }, [wordIndex, view.version, isRTL])
 
   return (
-    <textarea
-      ref={typingInputRef}
-      aria-label={currentWord}
-      onKeyDown={handleKeydown}
-      onBeforeInput={handleBeforeInput}
-      dir={isRTL ? "rtl" : "ltr"}
-      autoCapitalize="none"
-      spellCheck="false"
-      autoCorrect="off"
-      inputMode="text"
-      className={cn(
-        "pointer-events-none absolute resize-none overflow-hidden opacity-0 outline-none",
-        isRTL ? "right-0" : "left-0",
-      )}
-    />
+    <>
+      <label
+        htmlFor="typing-input"
+        className="sr-only">
+        Typing area: start typing to begin the test
+      </label>
+      <textarea
+        id="typing-input"
+        ref={typingInputRef}
+        aria-label={
+          status === "idle" ?
+            `Typing test: start typing to begin. First word: ${currentWord}`
+          : `Current word: ${currentWord}`
+        }
+        onKeyDown={handleKeydown}
+        onBeforeInput={handleBeforeInput}
+        dir={isRTL ? "rtl" : "ltr"}
+        autoCapitalize="none"
+        spellCheck="false"
+        autoCorrect="off"
+        inputMode="text"
+        className={cn(
+          "absolute resize-none overflow-hidden opacity-0 outline-none",
+          isRTL ? "right-0" : "left-0",
+        )}
+      />
+    </>
   )
 }
