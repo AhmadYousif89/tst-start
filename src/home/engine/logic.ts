@@ -227,9 +227,8 @@ export const getWordIndexByCursor = (
 ) => {
   for (let i = 0; i < wordRanges.length; i++) {
     const wordRange = wordRanges[i]
-    if (cursor >= wordRange.start && cursor <= wordRange.end) {
-      return i
-    }
+    // Cursor is considered to be "in" the word if it's between the start and end indices (end index is exclusive)
+    if (cursor >= wordRange.start && cursor < wordRange.end) return i
   }
   return -1
 }
@@ -238,15 +237,21 @@ export const getWordIndexByCursor = (
  * Returns the start and end indices of each word in the text.
  */
 export function getWordRanges(text: string) {
-  let startIdxPointer = 0
-  const words = text.split(" ")
+  const wordRanges: { start: number; end: number }[] = []
+  if (!text) return wordRanges
 
-  const wordRanges = words.map((word) => {
-    const start = startIdxPointer
-    const end = start + word.length
-    startIdxPointer = end + 1
-    return { start, end }
-  })
+  let start = 0
+
+  for (let i = 0; i < text.length; i++) {
+    const isLast = i === text.length - 1
+    const isSpace = text[i] === " "
+
+    if (isSpace || isLast) {
+      const end = i + 1
+      if (end > start) wordRanges.push({ start, end })
+      start = end
+    }
+  }
 
   return wordRanges
 }

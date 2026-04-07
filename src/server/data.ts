@@ -6,6 +6,21 @@ import { createServerFn } from "@tanstack/react-start"
 import { TextLanguage } from "@/home/context/engine.types"
 import { getLangCat } from "@/home/engine/utils"
 
+const normalizeTypingText = (text: string) => {
+  return text.replace(/\s+/g, " ").trim()
+}
+
+const toClientTextDoc = (doc: TextDoc | null) => {
+  if (!doc) return null
+  const normalizedText = normalizeTypingText(doc.text)
+  return {
+    ...doc,
+    _id: doc._id.toString(),
+    text: normalizedText,
+    charCount: normalizedText.length,
+  }
+}
+
 export const getInitialText = createServerFn().handler(async () => {
   try {
     const { db } = await connectToDB()
@@ -14,8 +29,7 @@ export const getInitialText = createServerFn().handler(async () => {
       category: "general",
     })
 
-    const data = textDocs ? { ...textDocs, _id: textDocs._id.toString() } : null
-    return data
+    return toClientTextDoc(textDocs)
   } catch (error) {
     console.error("Error fetching text data:", error)
     return null
@@ -50,8 +64,7 @@ export const getRandomText = createServerFn()
 
       const randomText = await db.collection<TextDoc>("texts").findOne({ _id: randomId })
 
-      const data = randomText ? { ...randomText, _id: randomText._id.toString() } : null
-      return data
+      return toClientTextDoc(randomText)
     } catch (error) {
       console.error("Error fetching random text data:", error)
       return null
@@ -80,8 +93,7 @@ export const getNextText = createServerFn()
 
       const nextText = await db.collection<TextDoc>("texts").findOne({ _id: nextId })
 
-      const data = nextText ? { ...nextText, _id: nextText._id.toString() } : null
-      return data
+      return toClientTextDoc(nextText)
     } catch (error) {
       console.error("Error fetching next text data:", error)
       return null

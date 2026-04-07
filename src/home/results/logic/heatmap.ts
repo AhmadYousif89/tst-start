@@ -23,14 +23,13 @@ export const analyzeHeatmap = (keystrokes: Keystroke[] | undefined, text: string
 
   const sortedKeystrokes = [...keystrokes].sort((a, b) => a.timestampMs - b.timestampMs)
 
-  // Map word index to stats
   const wordStatsMap = new Map<number, WordStats>()
-
-  const words = text.split(" ")
   const wordRanges = getWordRanges(text)
+
+  // This avoids trailing-empty entries that `split(" ")` produces for texts ending in spaces.
+  const words = wordRanges.map((r) => text.slice(r.start, r.end).replace(/ +$/g, ""))
   const wordWPMsList: number[] = []
 
-  // Group data by word index
   const wordData = words.map((word) => ({
     keystrokes: [] as Keystroke[],
     errors: new Set<number>(),
@@ -93,7 +92,7 @@ export const analyzeHeatmap = (keystrokes: Keystroke[] | undefined, text: string
       // Handle skips
       if (k.skipOrigin !== undefined) {
         const skipWordIdx = wordRanges.findIndex(
-          (r) => k.skipOrigin! >= r.start && k.skipOrigin! <= r.end,
+          (r) => k.skipOrigin! >= r.start && k.skipOrigin! < r.end,
         )
         if (skipWordIdx !== -1) {
           wordData[skipWordIdx].skipIndex = k.skipOrigin - wordRanges[skipWordIdx].start
@@ -111,7 +110,8 @@ export const analyzeHeatmap = (keystrokes: Keystroke[] | undefined, text: string
     })
 
     if (wordIdx !== -1) {
-      const isSpaceAtEnd = k.charIndex === wordRanges[wordIdx].end && k.typedChar === " "
+      const isSpaceAtEnd =
+        k.charIndex === wordRanges[wordIdx].end - 1 && k.typedChar === " "
       // Only update last word if it wasn't just the space moving us forward,
       // UNLESS there are no more words.
       if (!isSpaceAtEnd || wordIdx > absoluteLastTypedWordIdx) {

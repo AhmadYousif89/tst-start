@@ -31,8 +31,8 @@ describe("getWordRanges", () => {
     const ranges = getWordRanges(text)
 
     expect(ranges).toHaveLength(3)
-    expect(ranges[0]).toEqual({ start: 0, end: 3 })
-    expect(ranges[1]).toEqual({ start: 4, end: 9 })
+    expect(ranges[0]).toEqual({ start: 0, end: 4 })
+    expect(ranges[1]).toEqual({ start: 4, end: 10 })
     expect(ranges[2]).toEqual({ start: 10, end: 15 })
   })
 
@@ -42,12 +42,32 @@ describe("getWordRanges", () => {
     expect(ranges).toHaveLength(1)
     expect(ranges[0]).toEqual({ start: 0, end: 5 })
   })
+
+  it("handles trailing spaces without creating an empty range", () => {
+    const text = "hi "
+    const ranges = getWordRanges(text)
+    expect(ranges).toHaveLength(1)
+    expect(ranges[0]).toEqual({ start: 0, end: 3 })
+  })
+
+  it("handles consecutive spaces with stable character indices", () => {
+    const text = "a  b"
+    const ranges = getWordRanges(text)
+
+    // Ranges are chunks that end at a space (inclusive) or the end of the string.
+    // This mirrors the UI grouping which can produce a "word" that is just a space.
+    expect(ranges).toEqual([
+      { start: 0, end: 2 }, // "a "
+      { start: 2, end: 3 }, // " "
+      { start: 3, end: 4 }, // "b"
+    ])
+  })
 })
 
 describe("getWordIndexByCursor", () => {
   const ranges = [
-    { start: 0, end: 3 },
-    { start: 4, end: 9 },
+    { start: 0, end: 4 },
+    { start: 4, end: 10 },
     { start: 10, end: 15 },
   ]
 
@@ -64,7 +84,22 @@ describe("getWordIndexByCursor", () => {
     expect(getWordIndexByCursor(9, ranges)).toBe(1) // space after second word
   })
 
+  it("treats range end as exclusive", () => {
+    expect(getWordIndexByCursor(15, ranges)).toBe(-1)
+  })
+
   it("returns -1 if cursor is out of bounds", () => {
     expect(getWordIndexByCursor(20, ranges)).toBe(-1)
+  })
+
+  it("maps consecutive spaces consistently", () => {
+    const text = "a  b"
+    const weirdRanges = getWordRanges(text)
+
+    expect(getWordIndexByCursor(0, weirdRanges)).toBe(0) // "a"
+    expect(getWordIndexByCursor(1, weirdRanges)).toBe(0) // first space
+    expect(getWordIndexByCursor(2, weirdRanges)).toBe(1) // second space
+    expect(getWordIndexByCursor(3, weirdRanges)).toBe(2) // "b"
+    expect(getWordIndexByCursor(4, weirdRanges)).toBe(-1) // end of text (exclusive)
   })
 })
