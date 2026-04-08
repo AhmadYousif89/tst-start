@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest"
 import { createMockKeystrokes } from "./helpers"
-import { analyzeHeatmap } from "@/home/results/logic/heatmap"
+import { analyzeHeatmap } from "@/home/results/heatmap/logic/history"
 
 describe("analyzeHeatmap: Errors, Extras, and Skips", () => {
   const mockText = "The quick brown fox"

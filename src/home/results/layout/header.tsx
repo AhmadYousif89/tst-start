@@ -4,8 +4,8 @@ import Star2 from "/assets/images/pattern-star-2.svg"
 import { CompletedIcon, NewRecordIcon } from "../icons/header.icons"
 
 type Props = {
-  isNewRecord?: boolean
-  isInvalid?: boolean
+  isNewRecord: boolean
+  isInvalid: boolean
   subTitle: string
   title: string
 }
@@ -21,17 +21,17 @@ export const ResultHeader = ({
       {isNewRecord ?
         <NewRecordIcon />
       : <>
-            {!isInvalid && !isNewRecord && (
-              <Image
-                src={Star2}
-                alt="Star Pattern"
-                width={40}
-                height={40}
-                className="absolute top-1/4 left-4 size-6 md:size-8"
-              />
-            )}
-            <CompletedIcon isInvalid={isInvalid} />
-          </>
+          {!isInvalid && !isNewRecord && (
+            <Image
+              src={Star2}
+              alt="Star Pattern"
+              width={40}
+              height={40}
+              className="absolute top-1/4 left-4 size-6 md:size-8"
+            />
+          )}
+          <CompletedIcon isInvalid={isInvalid} />
+        </>
       }
       <div className="mt-4 flex flex-col gap-2.5 text-center md:mt-6">
         <h1 className="text-1-mobile md:text-1 text-foreground">{title}</h1>

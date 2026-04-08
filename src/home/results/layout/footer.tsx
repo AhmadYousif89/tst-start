@@ -12,8 +12,8 @@ import { LogoImage } from "@/components/header/logo"
 import { ResponsiveTooltipProvider } from "@/components/responsive-tooltip"
 
 type Props = {
-  caption?: string
-  isNewRecord?: boolean
+  caption: string
+  isNewRecord: boolean
 }
 
 export const ResultFooter = ({ caption, isNewRecord }: Props) => {

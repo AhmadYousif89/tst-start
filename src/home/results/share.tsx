@@ -68,6 +68,7 @@ export const ScreenshotButton = () => {
             setShareOpen(false)
             handleScreenshot()
           }}>
+          <span className="sr-only">Take Screenshot</span>
           <CameraIcon className="size-5" />
         </Button>
       </TooltipTrigger>
