@@ -7,6 +7,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip
 import { useMediaQuery } from "@/hooks/use-media-query"
 import { useSound } from "@/home/context/sound.context"
 import { useResult } from "./result.context"
+import { useHotkey } from "@tanstack/react-hotkeys"
 
 export const ScreenshotButton = () => {
   const { setIsScreenshotting, setLoadingProgress } = useResult()
@@ -54,6 +55,8 @@ export const ScreenshotButton = () => {
       }, 500)
     }
   }
+
+  useHotkey("Mod+D", handleScreenshot, { requireReset: true })
 
   return (
     <Tooltip

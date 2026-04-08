@@ -13,10 +13,13 @@ import {
 } from "@/components/ui/alert-dialog"
 import { Kbd, KbdGroup } from "@/components/ui/kbd"
 import { useEngineActions } from "../home/context/engine.context"
+import { getModKeyLabel } from "@/lib/platform"
 
 export const KeybindsModal = () => {
   const { registerOverlay, unregisterOverlay } = useEngineActions()
   const [isOpen, setIsOpen] = useState(false)
+
+  const modKeyLabel = getModKeyLabel()
 
   const toggleModal = () => {
     const nextState = !isOpen
@@ -50,15 +53,15 @@ export const KeybindsModal = () => {
         <div className="grid gap-4 py-4">
           <Section title="General">
             <Shortcut
-              keys={["Ctrl", "R"]}
+              keys={[modKeyLabel, "R"]}
               label="Restart Test"
             />
             <Shortcut
-              keys={["Ctrl", "S"]}
+              keys={[modKeyLabel, "S"]}
               label="Open Settings"
             />
             <Shortcut
-              keys={["Ctrl", "K"]}
+              keys={[modKeyLabel, "K"]}
               label="Toggle Keybinds Menu"
             />
           </Section>
@@ -77,6 +80,10 @@ export const KeybindsModal = () => {
             <Shortcut
               keys={["H"]}
               label="Toggle Heatmap"
+            />
+            <Shortcut
+              keys={[modKeyLabel, "D"]}
+              label="Take Screenshot"
             />
           </Section>
         </div>
