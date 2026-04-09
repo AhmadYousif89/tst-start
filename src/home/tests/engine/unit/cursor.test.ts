@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest"
-import { calculateNextCursor, getWordStart, getInitialTime } from "../../../engine/logic"
+import { calculateNextCursor, getWordStart, getInitialTime } from "@/home/engine/logic"
 
 describe("getInitialTime", () => {
   it("returns 0 for passage mode", () => {

@@ -18,7 +18,7 @@ export type CursorStyle = "pip" | "box" | "underline"
 export type CharState = {
   state: "not-typed" | "correct" | "incorrect"
   typedChar: string
-  extras?: string[]
+  extras?: readonly string[]
 }
 
 export type Keystroke = {

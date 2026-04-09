@@ -5,7 +5,7 @@ import {
   getWordStart,
   isWordPerfect,
   calculateNextCursor,
-} from "../../../engine/logic"
+} from "@/home/engine/logic"
 
 describe("Integration: Engine Mechanics", () => {
   describe("Word Locking Mechanism", () => {

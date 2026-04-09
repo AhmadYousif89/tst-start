@@ -307,16 +307,12 @@ export const TypingInput = ({
       <label
         htmlFor="typing-input"
         className="sr-only">
-        Typing area: start typing to begin the test
+        Typing area — start typing to begin the test
       </label>
       <textarea
         id="typing-input"
         ref={typingInputRef}
-        aria-label={
-          status === "idle" ?
-            `Typing test: start typing to begin. First word: ${currentWord}`
-          : `Current word: ${currentWord}`
-        }
+        aria-label="Typing input area"
         onKeyDown={handleKeydown}
         onBeforeInput={handleBeforeInput}
         dir={isRTL ? "rtl" : "ltr"}
@@ -329,6 +325,12 @@ export const TypingInput = ({
           isRTL ? "right-0" : "left-0",
         )}
       />
+      <span
+        aria-live="polite"
+        aria-atomic="true"
+        className="sr-only">
+        Current word: {currentWord}
+      </span>
     </>
   )
 }

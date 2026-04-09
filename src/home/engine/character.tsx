@@ -6,7 +6,7 @@ type CharacterProps = {
   char: string
   state: CharState["state"]
   isRTL: boolean
-  extras?: string[]
+  extras?: CharState["extras"]
   className?: string
   index?: number
 }

@@ -135,7 +135,9 @@ export const calculateNextCursor = (
   return Math.min(characters.length, currentCursor + 1)
 }
 
-const EMPTY_EXTRAS: string[] = []
+// Shared empty extras list for all untouched characters.
+// Frozen so accidental in-place mutation (e.g. `.push`) fails fast.
+const EMPTY_EXTRAS: readonly string[] = Object.freeze([])
 
 /**
  * Computes all character states based on the original characters and the list of keystrokes.
