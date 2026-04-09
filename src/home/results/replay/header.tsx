@@ -5,8 +5,9 @@ import { PauseIcon, PlayIcon, ReplyIcon } from "lucide-react"
 import { Kbd } from "@/components/ui/kbd"
 import { Button } from "@/components/ui/button"
 import { TooltipTrigger, TooltipContent, Tooltip } from "@/components/ui/tooltip"
-import { calculateWpm } from "@/home/engine/logic"
+
 import { useMediaQuery } from "@/hooks/use-media-query"
+import { calculateWpm } from "@/home/logic/metrics"
 import { Keystroke, CharState } from "@/home/context/engine.types"
 
 type ReplayToolbarProps = {

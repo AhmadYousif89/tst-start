@@ -1,20 +1,19 @@
 import { describe, it, expect } from "vitest"
+
 import {
   calculateWpm,
-  calculateAccuracy,
   calculateRawWpm,
+  calculateAccuracy,
   calculateConsistency,
-} from "@/home/engine/logic"
-import { Keystroke } from "../../../context/engine.types"
+} from "@/home/logic/metrics"
+import { Keystroke } from "@/home/context/engine.types"
 
 describe("calculateWpm", () => {
   it("calculates Wpm correctly for 1 minute", () => {
-    // 50 correct chars = 10 words. 10 words / 1 min = 10 WPM
     expect(calculateWpm(50, 60000)).toBe(10)
   })
 
   it("calculates Wpm correctly for 30 seconds", () => {
-    // 50 correct chars = 10 words. 10 words / 0.5 min = 20 WPM
     expect(calculateWpm(50, 30000)).toBe(20)
   })
 
@@ -70,12 +69,10 @@ describe("calculateAccuracy", () => {
 
 describe("calculateRawWpm", () => {
   it("calculates Raw WPM correctly for 1 minute", () => {
-    // 100 keystrokes = 20 words. 20 words / 1 min = 20 Raw WPM
     expect(calculateRawWpm(100, 60000)).toBe(20)
   })
 
   it("calculates Raw WPM correctly for 30 seconds", () => {
-    // 50 keystrokes = 10 words. 10 words / 0.5 min = 20 Raw WPM
     expect(calculateRawWpm(50, 30000)).toBe(20)
   })
 

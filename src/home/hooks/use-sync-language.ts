@@ -3,8 +3,8 @@ import { useQuery } from "@tanstack/react-query"
 import { useServerFn } from "@tanstack/react-start"
 
 import { TextDoc } from "@/lib/types"
+import { isLanguageSynced } from "../utils"
 import { getRandomText } from "@/server/data"
-import { isLanguageSynced } from "../engine/utils"
 import { TextLanguage, EngineStatus } from "../context/engine.types"
 
 type SyncProps = {

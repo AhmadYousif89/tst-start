@@ -9,8 +9,8 @@ import { PlaybackToolbar } from "./replay/header"
 import { Word } from "@/home/engine/word"
 import { Cursor } from "@/home/engine/cursor"
 import { wordsGroup } from "@/home/engine/words"
-import { isRtlLang } from "@/home/engine/utils"
-import { getCharStates } from "@/home/engine/logic"
+import { getCharStates } from "@/home/logic/char-state"
+import { isRtlLang } from "@/home/utils"
 
 export const ReplaySection = () => {
   const { playSound } = useSound()

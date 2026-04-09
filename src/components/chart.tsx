@@ -69,23 +69,29 @@ export const SessionChart = memo(() => {
     const durationSec = Math.ceil(resultData.durationMs / 1000)
     const data: Record<string, number | null>[] = []
 
+    const correctPerSecond = new Array<number>(durationSec).fill(0)
+    const totalPerSecond = new Array<number>(durationSec).fill(0)
+    const errorsPerSecond = new Array<number>(durationSec).fill(0)
+
+    // Single pass bucketing: avoid filtering the entire keystrokes array per-second.
+    for (const k of resultData.keystrokes) {
+      if (k.timestampMs < 0 || k.timestampMs >= resultData.durationMs) continue
+      const bucketIndex = Math.min(durationSec - 1, Math.floor(k.timestampMs / 1000))
+      if (k.typedChar !== "Backspace") {
+        totalPerSecond[bucketIndex]++
+        if (k.isCorrect) correctPerSecond[bucketIndex]++
+        else errorsPerSecond[bucketIndex]++
+      }
+    }
+
     let cumulativeCorrect = 0
     let cumulativeTotal = 0
 
     for (let s = 1; s <= durationSec; s++) {
-      const startTime = (s - 1) * 1000
-      const endTime = s * 1000
-
-      const ksInSecond = resultData.keystrokes.filter(
-        (k) => k.timestampMs >= startTime && k.timestampMs < endTime,
-      )
-      const correctInSecond = ksInSecond.filter(
-        (k) => k.isCorrect && k.typedChar !== "Backspace",
-      ).length
-      const totalInSecond = ksInSecond.filter((k) => k.typedChar !== "Backspace").length
-      const errorsInSecond = ksInSecond.filter(
-        (k) => !k.isCorrect && k.typedChar !== "Backspace",
-      ).length
+      const idx = s - 1
+      const correctInSecond = correctPerSecond[idx]
+      const totalInSecond = totalPerSecond[idx]
+      const errorsInSecond = errorsPerSecond[idx]
 
       cumulativeCorrect += correctInSecond
       cumulativeTotal += totalInSecond

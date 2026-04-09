@@ -24,7 +24,7 @@ import {
   TextLanguage,
   TextMode,
 } from "@/home/context/engine.types"
-import { isSessionInvalid } from "../engine/utils"
+import { isSessionInvalid } from "../utils"
 
 export type ResultData = {
   text: string

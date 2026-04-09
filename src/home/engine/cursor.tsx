@@ -1,11 +1,11 @@
 import { memo, useRef, useEffect } from "react"
 
 import { cn } from "@/lib/utils"
-import { isRtlLang } from "./utils"
+import { isRtlLang } from "../utils"
 import { CursorStyle } from "../context/engine.types"
-import { useEngineConfig, useEngineKeystroke } from "../context/engine.context"
 import { useWindowResize } from "@/hooks/use-window-resize"
 import { useTextSettings } from "../context/settings.context"
+import { useEngineConfig, useEngineKeystroke } from "../context/engine.context"
 
 export type CursorProps = {
   containerRef: React.RefObject<HTMLDivElement | null>

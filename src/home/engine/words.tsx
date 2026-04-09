@@ -6,14 +6,12 @@ import {
   useEngineConfig,
   useEngineActions,
 } from "../context/engine.context"
-import {
-  getCharStates,
-  calculateLayoutShift,
-  getWordIndexByCursor,
-  getWordRanges,
-} from "./logic"
+
+import { getWordRanges, getWordIndexByCursor } from "../logic/words"
+import { getCharStates } from "../logic/char-state"
+import { calculateLayoutShift } from "../logic/cursor"
+import { isRtlLang } from "../utils"
 import { Word } from "./word"
-import { isRtlLang } from "./utils"
 
 // Group characters into words (prevents mid-word line breaks)
 export const wordsGroup = (characters: string[]) => {

@@ -1,11 +1,9 @@
 import { describe, it, expect } from "vitest"
+
 import { simulateTyping } from "./helpers"
-import {
-  getCharStates,
-  getWordStart,
-  isWordPerfect,
-  calculateNextCursor,
-} from "@/home/engine/logic"
+import { getCharStates } from "@/home/logic/char-state"
+import { calculateNextCursor } from "@/home/logic/cursor"
+import { getWordStart, isWordPerfect } from "@/home/logic/words"
 
 describe("Integration: Engine Mechanics", () => {
   describe("Word Locking Mechanism", () => {

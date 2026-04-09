@@ -1,11 +1,36 @@
 import { describe, it, expect } from "vitest"
+
 import {
+  getWordStart,
   getWordEnd,
   getWordRanges,
-  getWordIndexByCursor,
   isWordPerfect,
-} from "@/home/engine/logic"
+  getWordIndexByCursor,
+} from "@/home/logic/words"
 import { CharState } from "@/home/context/engine.types"
+
+describe("getWordStart", () => {
+  const chars = "the quick brown".split("")
+
+  it("returns 0 for the first word", () => {
+    expect(getWordStart(0, chars)).toBe(0)
+    expect(getWordStart(1, chars)).toBe(0)
+    expect(getWordStart(2, chars)).toBe(0)
+  })
+
+  it("returns start of middle words", () => {
+    expect(getWordStart(4, chars)).toBe(4)
+    expect(getWordStart(6, chars)).toBe(4)
+  })
+
+  it("handles cursor on a space (treats as end of prev word)", () => {
+    expect(getWordStart(3, chars)).toBe(0)
+  })
+
+  it("handles end of string", () => {
+    expect(getWordStart(chars.length, chars)).toBe(10)
+  })
+})
 
 describe("getWordEnd", () => {
   const chars = "the quick brown".split("")
@@ -60,12 +85,10 @@ describe("getWordRanges", () => {
     const text = "a  b"
     const ranges = getWordRanges(text)
 
-    // Ranges are chunks that end at a space (inclusive) or the end of the string.
-    // This mirrors the UI grouping which can produce a "word" that is just a space.
     expect(ranges).toEqual([
-      { start: 0, end: 2 }, // "a "
-      { start: 2, end: 3 }, // " "
-      { start: 3, end: 4 }, // "b"
+      { start: 0, end: 2 },
+      { start: 2, end: 3 },
+      { start: 3, end: 4 },
     ])
   })
 })
@@ -85,9 +108,9 @@ describe("getWordIndexByCursor", () => {
   })
 
   it("finds correct index when cursor is on word boundaries", () => {
-    expect(getWordIndexByCursor(3, ranges)).toBe(0) // space after first word
-    expect(getWordIndexByCursor(4, ranges)).toBe(1) // start of second word
-    expect(getWordIndexByCursor(9, ranges)).toBe(1) // space after second word
+    expect(getWordIndexByCursor(3, ranges)).toBe(0)
+    expect(getWordIndexByCursor(4, ranges)).toBe(1)
+    expect(getWordIndexByCursor(9, ranges)).toBe(1)
   })
 
   it("treats range end as exclusive", () => {
@@ -102,11 +125,11 @@ describe("getWordIndexByCursor", () => {
     const text = "a  b"
     const weirdRanges = getWordRanges(text)
 
-    expect(getWordIndexByCursor(0, weirdRanges)).toBe(0) // "a"
-    expect(getWordIndexByCursor(1, weirdRanges)).toBe(0) // first space
-    expect(getWordIndexByCursor(2, weirdRanges)).toBe(1) // second space
-    expect(getWordIndexByCursor(3, weirdRanges)).toBe(2) // "b"
-    expect(getWordIndexByCursor(4, weirdRanges)).toBe(-1) // end of text (exclusive)
+    expect(getWordIndexByCursor(0, weirdRanges)).toBe(0)
+    expect(getWordIndexByCursor(1, weirdRanges)).toBe(0)
+    expect(getWordIndexByCursor(2, weirdRanges)).toBe(1)
+    expect(getWordIndexByCursor(3, weirdRanges)).toBe(2)
+    expect(getWordIndexByCursor(4, weirdRanges)).toBe(-1)
   })
 })
 
@@ -159,5 +182,10 @@ describe("isWordPerfect", () => {
 
   it("returns false for invalid range", () => {
     expect(isWordPerfect(5, 2, [])).toBe(false)
+  })
+
+  it("returns false if endIndex is out of bounds", () => {
+    const states: CharState[] = [{ state: "correct", typedChar: "a", extras: [] }]
+    expect(isWordPerfect(0, 1, states)).toBe(false)
   })
 })

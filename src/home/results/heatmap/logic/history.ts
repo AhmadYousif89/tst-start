@@ -1,5 +1,5 @@
 import { getBuckets } from "./buckets"
-import { getWordRanges } from "@/home/engine/logic"
+import { getWordRanges } from "@/home/logic/words"
 import { Keystroke } from "@/home/context/engine.types"
 
 export type WordStats = {

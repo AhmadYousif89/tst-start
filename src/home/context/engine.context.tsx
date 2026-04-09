@@ -21,16 +21,17 @@ import {
   EngineKeystrokeCtxType,
   ResetOptions,
 } from "./engine.types"
-import { useTextSettings } from "./settings.context"
+import { isSessionInvalid } from "../utils"
+import { getInitialTime } from "../logic/mode"
 import { engineReducer, initialState } from "./engine.reducer"
-import { isSessionInvalid } from "../engine/utils"
-import { calculateWpm, calculateAccuracy, getInitialTime } from "../engine/logic"
-import { useShortcutKeys } from "@/home/hooks/use-shortcut-keys"
+import { calculateWpm, calculateAccuracy } from "../logic/metrics"
 
+import { useShortcutKeys } from "@/home/hooks/use-shortcut-keys"
+import { useEngineExperience } from "../hooks/use-engine-experience"
 import { useSyncLanguage } from "../hooks/use-sync-language"
 import { useMetricsTick } from "../hooks/use-metrics-tick"
-import { useEngineExperience } from "../hooks/use-engine-experience"
 import { useMouseShake } from "../hooks/use-mouse-shake"
+import { useTextSettings } from "./settings.context"
 
 const EngineConfigCtx = createContext<EngineConfigCtxType | undefined>(undefined)
 

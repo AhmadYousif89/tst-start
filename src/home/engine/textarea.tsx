@@ -1,22 +1,23 @@
 import { useEffect, useMemo } from "react"
 
 import { cn } from "@/lib/utils"
-import { isRtlLang } from "./utils"
+import { isRtlLang } from "../utils"
 import {
   useEngineActions,
   useEngineConfig,
   useEngineKeystroke,
 } from "../context/engine.context"
 import { useSound } from "../context/sound.context"
+
 import {
-  getCharStates,
   getWordStart,
   isWordPerfect,
-  calculateNextCursor,
   getWordEnd,
   getWordRanges,
   getWordIndexByCursor,
-} from "./logic"
+} from "../logic/words"
+import { getCharStates } from "../logic/char-state"
+import { calculateNextCursor } from "../logic/cursor"
 
 const SIDE_BUFFER = 40
 

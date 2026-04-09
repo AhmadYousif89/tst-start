@@ -6,7 +6,7 @@ import { useResult } from "./result.context"
 import { analyzeHeatmap } from "./heatmap/logic/history"
 import { useMediaQuery } from "@/hooks/use-media-query"
 
-import { isRtlLang } from "../engine/utils"
+import { isRtlLang } from "../utils"
 import { HeatmapWord } from "./heatmap/word"
 import { HeatmapHeader } from "./heatmap/header"
 import { HeatmapLegend } from "./heatmap/legend"

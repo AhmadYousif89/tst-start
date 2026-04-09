@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest"
-import { getCharStates } from "@/home/engine/logic"
-import { Keystroke } from "../../../context/engine.types"
+
+import { Keystroke } from "@/home/context/engine.types"
+import { getCharStates } from "@/home/logic/char-state"
 
 describe("getCharStates", () => {
   const chars = "The quick brown fox".split("")
@@ -17,16 +18,39 @@ describe("getCharStates", () => {
   it("shares a single empty extras array across all characters (fragility check)", () => {
     const states = getCharStates(chars, [])
     const firstExtras = states[0].extras
-    // This confirms that all untouched chars point at the same empty array reference
     expect(states.every((s) => s.extras === firstExtras)).toBe(true)
   })
 
   it("prevents mutating the shared empty extras array (frozen)", () => {
     const states = getCharStates(chars, [])
     expect(() => {
-      // If this were allowed, it would pollute many CharState entries at once.
       ;(states[0].extras as string[]).push("x")
     }).toThrow()
+  })
+
+  it("returns the same array reference when called again with the same keystrokes array and no changes", () => {
+    const keystrokes: Keystroke[] = []
+    const states1 = getCharStates(chars, keystrokes)
+    const states2 = getCharStates(chars, keystrokes)
+    expect(states2).toBe(states1)
+  })
+
+  it("returns a new array reference when keystrokes are appended (and does not mutate the previous result)", () => {
+    const keystrokes: Keystroke[] = []
+    const states1 = getCharStates(chars, keystrokes)
+
+    keystrokes.push({
+      charIndex: 0,
+      expectedChar: "T",
+      typedChar: "T",
+      isCorrect: true,
+      timestampMs: 100,
+    })
+
+    const states2 = getCharStates(chars, keystrokes)
+    expect(states2).not.toBe(states1)
+    expect(states2[0].state).toBe("correct")
+    expect(states1[0].state).toBe("not-typed")
   })
 
   it("returns 'correct' for a correctly typed character", () => {
@@ -449,14 +473,14 @@ describe("getCharStates - robustness", () => {
         timestampMs: 100,
       },
       {
-        charIndex: 3, // Out of bounds
+        charIndex: 3,
         expectedChar: " ",
         typedChar: " ",
         isCorrect: false,
         timestampMs: 200,
       },
       {
-        charIndex: 5, // Way out of bounds
+        charIndex: 5,
         expectedChar: "x",
         typedChar: "x",
         isCorrect: false,
@@ -464,7 +488,6 @@ describe("getCharStates - robustness", () => {
       },
     ]
 
-    // Should not throw and should only process valid indices
     const states = getCharStates(chars, keystrokes)
     expect(states.length).toBe(3)
     expect(states[0].state).toBe("correct")

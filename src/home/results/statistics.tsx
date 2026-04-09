@@ -1,6 +1,7 @@
 import { useMemo } from "react"
 
-import { getModeLabel, calculateRawWpm, calculateConsistency } from "@/home/engine/logic"
+import { getModeLabel } from "@/home/logic/mode"
+import { calculateConsistency, calculateRawWpm } from "@/home/logic/metrics"
 import { useResult } from "./result.context"
 
 export const SessionStatistics = () => {

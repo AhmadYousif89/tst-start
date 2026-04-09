@@ -1,4 +1,4 @@
-import { TextCategory, TextLanguage, TextSchema } from "../context/engine.types"
+import { TextCategory, TextLanguage, TextSchema } from "./context/engine.types"
 
 // Formats a time in seconds to a string in the format "MM:SS".
 export const formatTime = (seconds: number) => {

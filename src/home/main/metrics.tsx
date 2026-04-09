@@ -1,4 +1,4 @@
-import { formatTime } from "../engine/utils"
+import { formatTime } from "../utils"
 import { useEngineConfig, useEngineMetrics } from "../context/engine.context"
 import { Progressbar } from "@/components/ui/progress-bar"
 import { useHydrated } from "@tanstack/react-router"

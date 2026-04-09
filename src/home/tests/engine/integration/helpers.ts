@@ -1,12 +1,12 @@
 import {
-  calculateAccuracy,
   calculateConsistency,
-  calculateNextCursor,
+  calculateAccuracy,
   calculateRawWpm,
   calculateWpm,
-  getCharStates,
-  getWordStart,
-} from "@/home/engine/logic"
+} from "@/home/logic/metrics"
+import { getWordStart } from "@/home/logic/words"
+import { calculateNextCursor } from "@/home/logic/cursor"
+import { getCharStates } from "@/home/logic/char-state"
 import { Keystroke } from "@/home/context/engine.types"
 
 /**
